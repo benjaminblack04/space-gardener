@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Test_level.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Test_level.tmx": {
+            "scale": 2.2991,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 544.9958679483275,
+                "y": 246.61824192075156
+            }
+        },
+        "Tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.7387
+        }
+    },
+    "last.exportedFilePath": "/home/benjamin/Documents/School/SET09121 Games Engineering/Code/space-gardener/res/levels",
+    "last.imagePath": "/home/benjamin/Documents/School/SET09121 Games Engineering/Code/space-gardener/res",
+    "map.height": 40,
+    "map.lastUsedExportFilter": "Tiled map files (*.tmx *.xml)",
+    "map.lastUsedFormat": "tmx",
+    "map.orientation": "2",
+    "map.tileHeight": 17,
+    "map.width": 40,
+    "openFiles": [
+        "Test_level.tmx",
+        "Tileset.tsx"
+    ],
+    "project": "Levels.tiled-project",
+    "recentFiles": [
+        "Tileset.tsx",
+        "Test_level.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 17,
+        "width": 32
+    }
+}
