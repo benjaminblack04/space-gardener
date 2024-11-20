@@ -12,9 +12,15 @@ SET(OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY})
 
 #### Add External Dependencies ####
+
+#SFML
 add_subdirectory("lib/sfml")
 set(SFML_INCS "lib/sfml/include")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
+
+#TinyXML2
+add_subdirectory("lib/tinyxml2")
+set(TINYXML2_INCS "lib/tinyxml2/include")
 
 add_custom_target(copy_resources ALL COMMAND ${CMAKE_COMMAND}
   -E copy_directory
@@ -25,6 +31,8 @@ add_custom_target(copy_resources ALL COMMAND ${CMAKE_COMMAND}
 #### Game ####
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
 add_executable(GAME ${SOURCES})
-target_include_directories(GAME PRIVATE ${SFML_INCS})
-target_link_libraries(GAME sfml-graphics)
+
+target_include_directories(GAME PRIVATE ${SFML_INCS} ${TINYXML2_INCS})
+target_link_libraries(GAME sfml-graphics tinyxml2)
+
 add_dependencies(GAME copy_resources)
