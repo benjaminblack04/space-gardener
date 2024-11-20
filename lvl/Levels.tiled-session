@@ -10,10 +10,10 @@
     "fileStates": {
         "Test_level.tmx": {
             "scale": 2.2991,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 544.9958679483275,
-                "y": 246.61824192075156
+                "x": 482.79761645861413,
+                "y": 233.13470488451998
             }
         },
         "Tileset.tsx": {
