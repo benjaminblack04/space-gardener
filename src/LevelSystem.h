@@ -21,10 +21,7 @@ public:
     static sf::Sprite getTileAt(sf::Vector2f);
     static sf::Vector2f getIsometric(int x, int y, int map_width);
 protected:
-    static std::vector<std::unique_ptr<sf::Sprite>> _tiles; //Internal array of tiles
-    static size_t _width; //how many tiles wide is level
-    static size_t _height; //how many tile high is level
-    static sf::Texture _tileset;
+    static std::vector<std::vector<std::unique_ptr<sf::Sprite>>> _tiles; //Internal array of tiles
 private:
     LevelSystem() = delete;
     ~LevelSystem() = delete;
