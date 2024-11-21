@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <tinyxml2.h>
 
+#include "LevelSystem.h"
+
 using namespace sf;
 using namespace std;
 using namespace tinyxml2;
@@ -47,21 +49,15 @@ void Render(RenderWindow& window) {
 int main(){
     RenderWindow window(VideoMode({gameWidth, gameHeight}), "Tile Game");
 
-    {
-        XMLDocument doc;
-
-        doc.LoadFile("res/levels/Test_level.xml");
-
-        const char* title = doc.FirstChildElement("map")->FirstChildElement("layer")->FirstChildElement("data")->GetText();
-        printf( "Name of play (1): %s\n", title );
-    }
-
     load();
+
+    ls::loadLevelFile("res/levels/Test_level.xml");
 
     while (window.isOpen()){
         window.clear();
         Update(window);
         Render(window);
+        ls::Render(window);
         window.display();
     }
 
