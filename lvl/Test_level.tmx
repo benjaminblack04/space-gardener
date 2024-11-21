@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="isometric" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="17" infinite="0" nextlayerid="6" nextobjectid="5">
+<map version="1.10" tiledversion="1.11.0" orientation="isometric" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="17" infinite="0" nextlayerid="6" nextobjectid="7">
  <editorsettings>
-  <export target="../res/levels/Test_level.map" format="tmx"/>
+  <export target="../res/levels/Test_level.xml" format="tmx"/>
  </editorsettings>
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="3" name="Underground" width="30" height="30">
@@ -44,8 +44,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,6,2,4,2,2,2,39,39,39,39,39,39,39,39,39,39,39,0,0,0,
+0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,9,0,0,0,0,0,6,2,4,2,2,2,39,39,39,39,39,39,39,39,39,39,39,0,0,0,
 0,0,0,0,0,0,0,0,0,2,6,2,2,2,2,2,2,2,39,39,39,39,39,39,39,39,39,0,0,0,
 0,0,0,0,0,0,0,0,2,2,6,7,6,2,3,2,4,2,2,39,39,39,39,39,39,39,39,0,0,0,
 0,0,0,0,0,0,0,2,2,2,2,2,6,6,2,2,2,2,3,2,39,39,39,39,39,39,39,0,0,0,
