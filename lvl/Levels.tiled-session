@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Test_level.tmx",
+    "activeFile": "arena.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -12,14 +12,22 @@
             "scale": 2.2991,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 584.5765734417814,
-                "y": 239.22404419120525
+                "x": 740.9421077813056,
+                "y": 333.1738506372058
             }
         },
         "Tileset.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1,
             "scaleInEditor": 5.7387
+        },
+        "arena.tmx": {
+            "scale": 1.5595,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 593.1388265469702,
+                "y": 352.6771401090093
+            }
         }
     },
     "last.exportedFilePath": "/home/benjamin/Documents/School/SET09121 Games Engineering/Code/space-gardener/res/levels",
@@ -32,12 +40,14 @@
     "map.width": 40,
     "openFiles": [
         "Test_level.tmx",
-        "Tileset.tsx"
+        "Tileset.tsx",
+        "arena.tmx"
     ],
     "project": "Levels.tiled-project",
     "recentFiles": [
+        "Test_level.tmx",
         "Tileset.tsx",
-        "Test_level.tmx"
+        "arena.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
