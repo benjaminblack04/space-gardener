@@ -1,4 +1,8 @@
 #include "entity.h"
+#include "game.h"
+#include "misc.h"
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 const int gameWidthEntity = 800;
 const int gameHeightEntity = 600;
@@ -275,6 +279,7 @@ const sf::Vector2f& Entity::getPosition() const {
 
 void Entity::setPosition(const sf::Vector2f& position) {
     _position = position;
+    shape.setPosition(position);
 }
 
 // Vérifier si l'entité doit être supprimée
@@ -366,8 +371,6 @@ Arrow::Arrow(const sf::Vector2f& position, const sf::Vector2f& direction)
     shape.setFillColor(sf::Color::White);
     shape.setOrigin(5.0f, 5.0f);
     shape.setPosition(position);
-    
-    std::cout << "Arrow created at: " << position.x << ", " << position.y << std::endl;
 }
 
 void Arrow::update(float dt) {
@@ -402,13 +405,10 @@ const sf::CircleShape& Arrow::getShape() const {
     return shape;
 }
 
-
-
 Player::Player() : stamina(100), maxStamina(100) {
     float player_size = 25.0f;
-    shape.setRadius({ player_size});
+    shape.setRadius(player_size);
     shape.setFillColor(sf::Color::Yellow);
-    shape.setPosition(350, 250); // a changer
     shape.setOrigin(player_size, player_size);
 }
 
@@ -417,9 +417,9 @@ void Player::update(const float& dt) {
     sf::Vector2f movement(0.0f, 0.0f);
 
     // Déterminer le mouvement basé sur les touches
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) movement.x -= moveSpeed * dt;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) movement.x -= moveSpeed * dt;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) movement.x += moveSpeed * dt;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) movement.y -= moveSpeed * dt;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) movement.y -= moveSpeed * dt;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) movement.y += moveSpeed * dt;
 
     if (movement.x != 0.0f || movement.y != 0.0f) {
@@ -468,16 +468,13 @@ void Player::update(const float& dt) {
             shape.setFillColor(sf::Color::Yellow); // Remettre à la couleur normale
         }
     }
-    
+
     for (auto& arrow : arrows) {
         arrow.update(dt);
     }
 
     // Mettre à jour la position interne
     _position = shape.getPosition();
-
-
-    
 
     // Supprimer les flèches expirées
     arrows.erase(std::remove_if(arrows.begin(), arrows.end(), [](const Arrow& arrow) {
@@ -550,9 +547,6 @@ void Player::handleMouseInput(const sf::RenderWindow& window) {
         if (chargeTime >= minChargeTime) {
             fireArrow(); // Tire une flèche
         }
-        else {
-            std::cout << "Not enough charge to fire!" << std::endl;
-        }
 
         chargeTime = 0.0f; // Réinitialise le temps de charge
     }
@@ -568,7 +562,7 @@ const std::vector<Arrow>& Player::getArrows() const {
 
 void Player::drawHealthBar(sf::RenderWindow& window, sf::Font font) {
     if (getHealth() <= 0) { setHealth(0); }
-    
+
     float maxHealth = getMaxHealth();
     float currentHealth = getHealth();
 
@@ -579,30 +573,22 @@ void Player::drawHealthBar(sf::RenderWindow& window, sf::Font font) {
     // Obtenez la position du joueur
     sf::Vector2f playerPosition = getPosition();
 
-    float position_x = playerPosition.x - gameWidthEntity * .5f + 50;
-    float position_y = playerPosition.y + gameHeightEntity * .5f - 50;
+    float position_x = playerPosition.x - 380;
+    float position_y = playerPosition.y - 280;
 
     // Rectangle de fond (rouge)
     sf::RectangleShape healthBarBackground(sf::Vector2f(barWidth, barHeight));
-    healthBarBackground.setFillColor(sf::Color::Red);
+    healthBarBackground.setFillColor(sf::Color::Black);
     healthBarBackground.setPosition(position_x, position_y); // En dessous du joueur
 
     // Rectangle pour la vie restante (vert)
-    sf::RectangleShape healthBar(sf::Vector2f(barWidth * healthPercentage, barHeight));
-    healthBar.setFillColor(sf::Color::Green);
-    healthBar.setPosition(position_x, position_y);
-
-    sf::Text HpText;
-    HpText.setFont(font); // Assurez-vous que la police est chargée dans `load`
-    HpText.setCharacterSize(16);
-    HpText.setFillColor(sf::Color::White);
-    HpText.setString("  HP");
-    HpText.setPosition(position_x, position_y);
+    sf::RectangleShape healthBar(sf::Vector2f((barWidth * healthPercentage) - 6, (barHeight - 6)));
+    healthBar.setFillColor(sf::Color::Red);
+    healthBar.setPosition(position_x + 3, position_y + 3);
 
     // Dessiner les barres
     window.draw(healthBarBackground); // Fond rouge
     window.draw(healthBar);           // Vie verte
-    window.draw(HpText);
 }
 
 void Player::drawSaminaBar(sf::RenderWindow& window, sf::Font font) {
@@ -613,30 +599,22 @@ void Player::drawSaminaBar(sf::RenderWindow& window, sf::Font font) {
     // Obtenez la position du joueur
     sf::Vector2f playerPosition = getPosition();
 
-    float position_x = playerPosition.x + gameWidthEntity * .5f - 200;
-    float position_y = playerPosition.y + gameHeightEntity * .5f - 50;
+    float position_x = playerPosition.x - 380;
+    float position_y = playerPosition.y - 250;
 
     // Rectangle de fond (rouge)
     sf::RectangleShape StaminaBarBackground(sf::Vector2f(barWidth, barHeight));
-    StaminaBarBackground.setFillColor(sf::Color::Cyan);
+    StaminaBarBackground.setFillColor(sf::Color::Black);
     StaminaBarBackground.setPosition(position_x, position_y); // En dessous du joueur
 
     // Rectangle pour la vie restante (vert)
-    sf::RectangleShape StaminaBar(sf::Vector2f(barWidth * StaminaPercentage, barHeight));
-    StaminaBar.setFillColor(sf::Color::Blue);
-    StaminaBar.setPosition(position_x, position_y);
-
-    sf::Text StaminaText;
-    StaminaText.setFont(font); // Assurez-vous que la police est chargée dans `load`
-    StaminaText.setCharacterSize(16);
-    StaminaText.setFillColor(sf::Color::White);
-    StaminaText.setString("  Energy");
-    StaminaText.setPosition(position_x, position_y);
+    sf::RectangleShape StaminaBar(sf::Vector2f((barWidth * StaminaPercentage) - 6, barHeight - 6));
+    StaminaBar.setFillColor(sf::Color::Green);
+    StaminaBar.setPosition(position_x + 3, position_y + 3);
 
     // Dessiner les barres
     window.draw(StaminaBarBackground); // Fond rouge
     window.draw(StaminaBar);           // Vie verte
-    window.draw(StaminaText);
 }
 
 void Player::decreaseStamina(float value) {
@@ -683,7 +661,6 @@ Enemy::Enemy() {
     float enemy_size = 25.0f;
     shape.setRadius(enemy_size);
     shape.setFillColor(sf::Color::Green);
-    shape.setPosition(rand() % 800, rand() % 600);
     shape.setOrigin(enemy_size, enemy_size);
 }
 
@@ -701,7 +678,7 @@ void Enemy::update(const float& dt) {
     float dy = (rand() % 3 - 1) * moveSpeed * dt;
     shape.move(dx, dy);*/
 
-    
+
 
     //// Obtenir la position du joueur
     const sf::Vector2f& playerPosition = _player->getPosition();
@@ -714,17 +691,15 @@ void Enemy::update(const float& dt) {
     float threshold_move = 250.0f;
     float threshold_short_attack = 100.0f;
 
-    
+    float moveSpeed = .7f;
 
     if (distance_player > threshold_move) {
         // Se rapprocher du joueur
-        float moveSpeed = .9f;
         sf::Vector2f direction(dx, dy); // Normaliser le vecteur dx / (distance_player - 10), dy / (distance_player - 10)
         shape.setFillColor(sf::Color::Green);
         shape.move(direction * moveSpeed * dt);
     }
     else if (threshold_move >= distance_player && distance_player > threshold_short_attack) {
-        float moveSpeed = .9f;
         sf::Vector2f direction(dx, dy); // Normaliser le vecteur dx / (distance_player - 10), dy / (distance_player - 10)
         shape.setFillColor(sf::Color::Green);
         shape.move(direction * moveSpeed * dt);
@@ -782,8 +757,8 @@ void Enemy::update(const float& dt) {
     swordAttacks.erase(std::remove_if(swordAttacks.begin(), swordAttacks.end(),
         [](const SwordAttack& attack) { return attack.isExpired() || attack.hasDealtDamage; }),
         swordAttacks.end());
-    
-    
+
+
 
     //// Mettre à jour la position interne
     _position = shape.getPosition();

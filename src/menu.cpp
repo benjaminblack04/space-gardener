@@ -2,6 +2,9 @@
 //Copier le .cpp et .h des entities et voir comment set une position avec comme variable X et Y
 #include "menu.h"
 #include "entity.h"
+#include "LevelSystem.h"
+#include "game.h"
+#include <iomanip>
 
 // Définitions des scènes
 std::shared_ptr<Scene> gameScene;
@@ -10,8 +13,11 @@ std::shared_ptr<Scene> activeScene;
 
 sf::View cameraView;
 
-void MenuScene::load() {
+int enemyLastSpawned = 0;
 
+float currentTime = 0;
+
+void MenuScene::load() {
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -20,25 +26,31 @@ void MenuScene::load() {
             return; // Quitter si la police ne peut pas être chargée
 
         }
-        text.setFont(font);
-        text.setCharacterSize(48);
-        text.setFillColor(sf::Color::Yellow);
-        text.setString("Space Gardener");  // Texte initial
-        text.setPosition(200, 250);       // Position du texte
+        menu_text.setFont(font);
+        menu_text.setCharacterSize(48);
+        menu_text.setFillColor(sf::Color::Yellow);
+        menu_text.setString("Space Gardener");  // Texte initial
+        menu_text.setPosition((gameWidth / 2) - (menu_text.getLocalBounds().width / 2), 150);       // Position du texte
 
+        menu_start_text.setFont(font);
+        menu_start_text.setCharacterSize(29);
+        menu_start_text.setFillColor(sf::Color::White);
+        menu_start_text.setString("           Press [ENTER] to start\nPress [ESCAPE] to close the game");
+        menu_start_text.setPosition((gameWidth / 2) - (menu_start_text.getLocalBounds().width / 2), 400);
     }
+
     cameraView.setSize(gameWidth, gameHeight);
     cameraView.setCenter(gameWidth * .5f, gameHeight * .5f);
 }
 
 void MenuScene::update(double dt) {
     Scene::update(dt);
-    //text.setString("Almost Pacman");
 }
 
 void MenuScene::render(sf::RenderWindow& window) {
     window.setView(cameraView);
-    window.draw(text);   // Afficher le texte du menu
+    window.draw(menu_text);   // Afficher le texte du menu
+    window.draw(menu_start_text);
     Scene::render(window);  // Rendu des autres entités si besoin
 }
 
@@ -63,15 +75,10 @@ void GameScene::load() {
         // Créer le joueur et les fantômes, puis les ajouter à l'EntityManager de la scène
         if (_ents.list.empty()) {
             auto player = std::make_shared<Player>();
-            player->setPosition(sf::Vector2f(400, 300));
+            player->setPosition({150, 650});
             _ents.list.push_back(player);
 
-            for (int i = 0; i < 16; ++i) {
-                auto enemy = std::make_shared<Enemy>();
-                enemy->getPlayer(player);
-                enemy->setPosition(sf::Vector2f(100, 100)); //rand() % gameWidth, rand() % gameHeight
-                _ents.list.push_back(enemy);
-            }
+            return;
         }
     }
     // Démarrer l'horloge de score
@@ -82,11 +89,6 @@ void GameScene::update(double dt) {
     // Mise à jour normale des entités
     Scene::update(dt);
 
-    // Mettre à jour le texte du score en fonction du temps écoulé
-    /*int score = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
-    text.setString("Score: " + std::to_string(score));*/
-
-
     auto player = getPlayer();
     if (!player) return;
 
@@ -96,6 +98,18 @@ void GameScene::update(double dt) {
             respawn();
         }
         return; // Ne pas mettre à jour les autres entités
+    } else {
+        int currentTime = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
+        currentTime = (currentTime == 0) ? 1 : currentTime;
+
+        if (currentTime % 3 == 0 && enemyLastSpawned == currentTime - 3) {
+            enemyLastSpawned = currentTime;
+
+            auto enemy = std::make_shared<Enemy>();
+            enemy->getPlayer(player);
+            enemy->setPosition({rand() % 1000, rand() % 1000}); //rand() % gameWidth, rand() % gameHeight
+            _ents.list.push_back(enemy);
+        }
     }
 
     cameraView.setCenter(player->getPosition());
@@ -112,31 +126,11 @@ void GameScene::render(sf::RenderWindow& window) {
     auto player = getPlayer();
     if (!player) return;
 
-    //std::cout << "window don't find !! " << std::endl;
-    // Effacer l'écran avec une couleur de fond
-    window.clear(sf::Color::Black);
-
-    // Dessiner la grille fixe dans le monde
-    sf::VertexArray grid(sf::Lines);
-    int gridSpacing = 50; // Taille de chaque cellule
-
-    // Calculer les limites visibles de la caméra
+     // Calculer les limites visibles de la caméra
     sf::Vector2f viewTopLeft = cameraView.getCenter() - cameraView.getSize() / 2.0f;
     sf::Vector2f viewBottomRight = cameraView.getCenter() + cameraView.getSize() / 2.0f;
 
-    // Lignes verticales
-    for (int x = static_cast<int>(viewTopLeft.x) / gridSpacing * gridSpacing; x <= viewBottomRight.x; x += gridSpacing) {
-        grid.append(sf::Vertex(sf::Vector2f(x, viewTopLeft.y), sf::Color(128, 128, 128)));
-        grid.append(sf::Vertex(sf::Vector2f(x, viewBottomRight.y), sf::Color(128, 128, 128)));
-    }
-
-    // Lignes horizontales
-    for (int y = static_cast<int>(viewTopLeft.y) / gridSpacing * gridSpacing; y <= viewBottomRight.y; y += gridSpacing) {
-        grid.append(sf::Vertex(sf::Vector2f(viewTopLeft.x, y), sf::Color(128, 128, 128)));
-        grid.append(sf::Vertex(sf::Vector2f(viewBottomRight.x, y), sf::Color(128, 128, 128)));
-    }
-
-    window.draw(grid); // Dessiner la grille
+    ls::Render(window);
 
     // Dessiner les barres de vie des ennemis
     for (const auto& entity : _ents.list) {
@@ -149,18 +143,34 @@ void GameScene::render(sf::RenderWindow& window) {
 
     // Dessiner la barre de vie du joueur
     player->drawHealthBar(window, font);
-
     player->drawSaminaBar(window, font);
 
     // Dessiner les entités elles-mêmes
     Scene::render(window);
+
+    // TODO: round down
+    sf::Text time_text;
+    time_text.setFont(font);
+    time_text.setCharacterSize(24);
+    time_text.setFillColor(sf::Color::White);
+    time_text.setString("Time: " + std::to_string(round(currentTime * 100) / 100));
+    time_text.setPosition(cameraView.getCenter().x - (time_text.getLocalBounds().getSize().x / 2),
+                          cameraView.getCenter().y + 250);
+
+    sf::RectangleShape time_overlay({floor(time_text.getLocalBounds().getSize().x + 10),
+                                          45});
+    time_overlay.setFillColor(sf::Color(0, 0, 0, 190)); // Couleur semi-transparente
+    time_overlay.setPosition(time_text.getPosition().x - 5, time_text.getPosition().y - 5);
+
+    window.draw(time_overlay);
+    window.draw(time_text);
 
     // Si le joueur est mort, ajouter un overlay semi-transparent
     if (!player->isAlive()) {
         sf::RectangleShape overlay(sf::Vector2f(cameraView.getSize().x, cameraView.getSize().y));
         overlay.setFillColor(sf::Color(40, 15, 15, 225)); // Couleur semi-transparente
         overlay.setPosition(cameraView.getCenter().x - cameraView.getSize().x / 2.0f,
-            cameraView.getCenter().y - cameraView.getSize().y / 2.0f);
+                            cameraView.getCenter().y - cameraView.getSize().y / 2.0f);
 
         window.draw(overlay);
 
@@ -171,32 +181,20 @@ void GameScene::render(sf::RenderWindow& window) {
         respawnText.setString("You Died! Press R to Respawn");
         respawnText.setPosition(cameraView.getCenter().x - 170, cameraView.getCenter().y - 20);
         window.draw(respawnText);
+    } else {
+        currentTime = scoreClock.getElapsedTime().asSeconds();
     }
 }
 
-
 void GameScene::respawn() {
-    for (auto& entity : _ents.list) {
-        if (auto player = std::dynamic_pointer_cast<Player>(entity)) {
-            // Réinitialiser le joueur
-            player->setAlive(true);
-            //player->getShape().setFillColor(sf::Color::Red);
-            player->setHealth(player->getMaxHealth()); // Réinitialiser les points de vie à leur maximum
-            player->setPosition(sf::Vector2f(gameWidth * 0.5f, gameHeight * 0.5f)); // Position centrale
-            player->syncShapePosition();
-            //player->getShape()->setFillColor(sf::Color::Yellow);
-            cameraView.setCenter(player->getPosition());
-        }
-        else if (auto enemy = std::dynamic_pointer_cast<Enemy>(entity)) {
-            // Réinitialiser les ennemis
-            enemy->setAlive(true);
-            enemy->setHealth(enemy->getMaxHealth()); // Réinitialiser les points de vie
-            enemy->setPosition(sf::Vector2f(rand() % gameWidth, rand() % gameHeight)); // Position aléatoire
-            enemy->syncShapePosition();
+    _ents.list.clear();
 
-            enemy->clearAttacks();
-        }
-    }
+    scoreClock.restart();
+    enemyLastSpawned = 0;
+
+    auto player = std::make_shared<Player>();
+    player->setPosition({150, 650});
+    _ents.list.push_back(player);
 }
 
 // Initialiser les scènes
