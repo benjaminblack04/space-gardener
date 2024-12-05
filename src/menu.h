@@ -16,9 +16,15 @@ extern std::shared_ptr<Scene> activeScene;
 class MenuScene : public Scene {
 private:
     sf::Text menu_text;  // Texte pour l'affichage du menu
-    sf::Text menu_start_text;
+    sf::Text credit_text;
     sf::Font font;  // Police pour le texte
     //bool _alreadyLoad;
+
+    sf::RectangleShape playButton;
+    sf::Text playButton_text;
+
+    sf::RectangleShape quitButton;
+    sf::Text quitButton_text;
 
 public:
     MenuScene() = default;
