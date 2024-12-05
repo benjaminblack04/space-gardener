@@ -5,6 +5,7 @@
 #include "LevelSystem.h"
 #include "game.h"
 #include <iomanip>
+#include <stdlib.h>s
 
 // Définitions des scènes
 std::shared_ptr<Scene> gameScene;
@@ -29,16 +30,49 @@ void MenuScene::load() {
 
         }
         menu_text.setFont(font);
-        menu_text.setCharacterSize(48);
+        menu_text.setCharacterSize(50);
         menu_text.setFillColor(sf::Color::Yellow);
         menu_text.setString("Space Gardener");  // Texte initial
         menu_text.setPosition((gameWidth / 2) - (menu_text.getLocalBounds().width / 2), 150);       // Position du texte
+        menu_text.setOrigin(menu_text.getLocalBounds().width / 2, menu_text.getLocalBounds().height / 2);
+        menu_text.setPosition(gameWidth * .5f, gameHeight * .2f);
 
-        menu_start_text.setFont(font);
-        menu_start_text.setCharacterSize(29);
-        menu_start_text.setFillColor(sf::Color::White);
-        menu_start_text.setString("           Press [ENTER] to start\nPress [ESCAPE] to close the game");
-        menu_start_text.setPosition((gameWidth / 2) - (menu_start_text.getLocalBounds().width / 2), 400);
+        credit_text.setFont(font);
+        credit_text.setCharacterSize(28);
+        credit_text.setFillColor(sf::Color::White);
+        credit_text.setString("Benjamin & Thibault");
+        credit_text.setOrigin(credit_text.getLocalBounds().width / 2, credit_text.getLocalBounds().height / 2);
+        credit_text.setPosition(gameWidth * .5f, gameHeight * .85f);
+
+        sf::Color gris(128, 128, 200);
+
+        float playButton_width = 250.f;
+        float playButton_height = 100.f;
+        playButton.setSize(sf::Vector2f(playButton_width, playButton_height));
+        playButton.setOrigin(playButton_width * .5f, playButton_height * .5f);
+        playButton.setFillColor(gris);
+        playButton.setPosition(gameWidth * .5f, gameHeight * .5f);
+
+        playButton_text.setFont(font);
+        playButton_text.setCharacterSize(30);
+        playButton_text.setFillColor(sf::Color::White);
+        playButton_text.setString("PLAY");
+        playButton_text.setOrigin(playButton_text.getLocalBounds().width / 2, playButton_text.getLocalBounds().height);
+        playButton_text.setPosition(gameWidth * .5f, gameHeight * .5f);
+
+        float quitButton_width = 250.f;
+        float quitButton_height = 100.f;
+        quitButton.setSize(sf::Vector2f(quitButton_width, quitButton_height));
+        quitButton.setOrigin(quitButton_width * .5f, quitButton_height * .5f);
+        quitButton.setFillColor(gris);
+        quitButton.setPosition(gameWidth * .5f, gameHeight * .7f);
+
+        quitButton_text.setFont(font);
+        quitButton_text.setCharacterSize(30);
+        quitButton_text.setFillColor(sf::Color::White);
+        quitButton_text.setString("QUIT");
+        quitButton_text.setOrigin(quitButton_text.getLocalBounds().width / 2, quitButton_text.getLocalBounds().height);
+        quitButton_text.setPosition(gameWidth * .5f, gameHeight * .7f);
     }
 
     cameraView.setSize(gameWidth, gameHeight);
@@ -47,12 +81,29 @@ void MenuScene::load() {
 
 void MenuScene::update(double dt) {
     Scene::update(dt);
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(*window); // Position de la souris
+        sf::Vector2f worldPos = window->mapPixelToCoords(mousePos);
+
+        if (playButton.getGlobalBounds().contains(worldPos)) {
+            activeScene = gameScene;
+            activeScene->load();
+        }
+        if (quitButton.getGlobalBounds().contains(worldPos)) {
+            window->close();
+        }
+    }
 }
 
 void MenuScene::render(sf::RenderWindow& window) {
     window.setView(cameraView);
     window.draw(menu_text);   // Afficher le texte du menu
-    window.draw(menu_start_text);
+    window.draw(credit_text);
+    window.draw(playButton);
+    window.draw(quitButton);
+    window.draw(playButton_text);
+    window.draw(quitButton_text);
     Scene::render(window);  // Rendu des autres entités si besoin
 }
 
@@ -109,7 +160,7 @@ void GameScene::update(double dt) {
 
             auto enemy = std::make_shared<Enemy>();
             enemy->getPlayer(player);
-            enemy->setPosition({rand() % 1000, rand() % 1000}); //rand() % gameWidth, rand() % gameHeight
+            enemy->setPosition({ (rand() % 1000) * 1.f, (rand() % 1000) * 1.f }); //rand() % gameWidth, rand() % gameHeight
             _ents.list.push_back(enemy);
         }
     }

@@ -45,9 +45,9 @@ void Update(RenderWindow& window) {
         if (activeScene == gameScene) {
             activeScene = menuScene;
             activeScene->load();
-        } else {
+        }/* else {
           window.close();
-        }
+        }*/
     }
 
     activeScene->update(dt);
