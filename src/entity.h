@@ -36,6 +36,9 @@ public:
     virtual float getRadius() const;
     virtual const sf::Shape* getShape() const;
 
+    bool _isMarkedForDeletion = false; // Indique si l'entité doit être supprimée
+    float _timeSinceDeath = 0.0f;
+
 protected:
     //std::vector<std::shared_ptr<Component>> _components;
     sf::Vector2f _position;
@@ -198,8 +201,10 @@ public:
     bool getAlreadyCounted() const;
     void setAlreadyCounted(bool counted);
 
+
 private:
     bool alreadyCounted = false;
+    
 
     std::shared_ptr<Player> _player;
 

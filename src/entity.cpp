@@ -227,6 +227,10 @@ void EntityManager::update(double dt) {
         if (auto enemy = dynamic_cast<Enemy*>(entity.get())) {
             if (!enemy->isAlive()) {
                 enemy->clearAttacks();
+                entity->_timeSinceDeath += dt;
+                if (entity->_timeSinceDeath >= 3.0f) {
+                    entity->_isMarkedForDeletion = true;
+                }
                 if (!enemy->getAlreadyCounted()) { // Utilisez un drapeau pour éviter les doubles comptages
                     increaseScore(1); // Ajoutez 10 points au score
                     enemy->setAlreadyCounted(true); // Marquez l'ennemi comme compté
@@ -262,6 +266,12 @@ void EntityManager::update(double dt) {
             }
         }
     }
+
+    list.erase(std::remove_if(list.begin(), list.end(),
+        [](const std::shared_ptr<Entity>& entity) {
+            return entity->_isMarkedForDeletion;
+        }),
+        list.end());
 }
 
 
