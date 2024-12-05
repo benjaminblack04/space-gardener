@@ -41,6 +41,8 @@ private:
     //bool _alreadyLoad;
     void respawn();
 
+    //sf::Text scoreText;
+
 public:
     GameScene() = default;
     void update(double dt) override;

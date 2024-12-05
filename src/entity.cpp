@@ -226,7 +226,11 @@ void EntityManager::update(double dt) {
     for (auto& entity : list) {
         if (auto enemy = dynamic_cast<Enemy*>(entity.get())) {
             if (!enemy->isAlive()) {
-                enemy->clearAttacks(); // Supprimer les attaques des ennemis morts
+                enemy->clearAttacks();
+                if (!enemy->getAlreadyCounted()) { // Utilisez un drapeau pour éviter les doubles comptages
+                    increaseScore(1); // Ajoutez 10 points au score
+                    enemy->setAlreadyCounted(true); // Marquez l'ennemi comme compté
+                }
                 continue;
             }
 
@@ -266,6 +270,14 @@ void EntityManager::render(sf::RenderWindow& window) {
     for (auto& entity : list) {
         entity->render(window);
     }
+}
+
+void EntityManager::increaseScore(int points) {
+    score += points;
+}
+
+void EntityManager::resetScore() {
+    score = 0;
 }
 
 Entity::Entity() : _position(0.0f, 0.0f), _rotation(0.0f), _alive(true), _visible(true), _fordeletion(false), _health(100) {}
@@ -813,6 +825,14 @@ std::vector<AttackShortEnemy>& Enemy::getShortAttacks() {
 
 void Enemy::clearAttacks() {
     shortAttacks.clear(); // Supprime toutes les attaques courtes
+}
+
+bool Enemy::getAlreadyCounted() const {
+    return alreadyCounted;
+}
+
+void Enemy::setAlreadyCounted(bool counted) {
+    alreadyCounted = counted;
 }
 
 

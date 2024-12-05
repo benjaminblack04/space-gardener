@@ -194,7 +194,13 @@ public:
 
     float getRadius() const override;
     const sf::Shape* getShape() const override;
+
+    bool getAlreadyCounted() const;
+    void setAlreadyCounted(bool counted);
+
 private:
+    bool alreadyCounted = false;
+
     std::shared_ptr<Player> _player;
 
     std::vector<AttackShortEnemy> shortAttacks;
@@ -211,4 +217,8 @@ struct EntityManager {
     std::vector<std::shared_ptr<Entity>> list;
     void update(double dt);
     void render(sf::RenderWindow& window);
+
+    int score = 0; // Nouveau membre pour le score
+    void increaseScore(int points); // Nouvelle fonction pour augmenter le score
+    void resetScore(); // Nouvelle fonction pour réinitialiser le score
 };

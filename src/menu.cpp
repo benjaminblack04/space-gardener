@@ -18,8 +18,6 @@ int enemyLastSpawned = 0;
 
 float currentTime = 0;
 
-int enemiesKilled = 0;
-
 void MenuScene::load() {
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
@@ -133,6 +131,13 @@ void GameScene::load() {
 
             return;
         }
+
+
+        //scoreText.setFont(font); // Assurez-vous que la police est chargée
+        //scoreText.setCharacterSize(24);
+        //scoreText.setFillColor(sf::Color::White);
+        //scoreText.setString("Score: 0"); // Initialement à 0
+        //scoreText.setPosition(gameWidth * 0.05f, gameHeight * 0.05f); // Position en haut à gauche
     }
     // Démarrer l'horloge de score
     scoreClock.restart();
@@ -144,6 +149,8 @@ void GameScene::update(double dt) {
 
     auto player = getPlayer();
     if (!player) return;
+
+    //scoreText.setString("Score: " + std::to_string(_ents.score));
 
     // Si le joueur est mort, attendre une action de respawn
     if (player->isAlive() == false) {
@@ -223,9 +230,8 @@ void GameScene::render(sf::RenderWindow& window) {
     kills_text.setFont(font);
     kills_text.setCharacterSize(24);
     kills_text.setFillColor(sf::Color::White);
-    kills_text.setString("Kills: " + std::to_string(enemiesKilled));
-    kills_text.setPosition(cameraView.getCenter().x - (kills_text.getLocalBounds().getSize().x / 2),
-                          cameraView.getCenter().y + 200);
+    kills_text.setString("Kills: " + std::to_string(_ents.score));
+    kills_text.setPosition(cameraView.getCenter().x - (kills_text.getLocalBounds().getSize().x / 2), cameraView.getCenter().y + 200); //cameraView.getCenter().x ), cameraView.getCenter().y + 200
 
     sf::RectangleShape kills_overlay({floor(kills_text.getLocalBounds().getSize().x + 10),
                                           45});
