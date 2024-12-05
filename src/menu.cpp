@@ -157,6 +157,13 @@ void GameScene::update(double dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
             respawn();
         }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(*window); // Position de la souris
+            sf::Vector2f worldPos = window->mapPixelToCoords(mousePos);
+            if (respawnButton.getGlobalBounds().contains(worldPos)) {
+                respawn();
+            }
+        }
         return; // Ne pas mettre à jour les autres entités
     } else {
         int currentTime = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
@@ -252,11 +259,38 @@ void GameScene::render(sf::RenderWindow& window) {
 
         sf::Text respawnText;
         respawnText.setFont(font);
-        respawnText.setCharacterSize(24);
+        respawnText.setCharacterSize(50);
         respawnText.setFillColor(sf::Color::White);
-        respawnText.setString("You Died! Press R to Respawn");
-        respawnText.setPosition(cameraView.getCenter().x - 170, cameraView.getCenter().y - 20);
+        respawnText.setString("You Died!");
+        respawnText.setPosition(cameraView.getCenter().x - (respawnText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y - gameHeight * .3f);
         window.draw(respawnText);
+
+        sf::Text scoreText;
+        scoreText.setFont(font);
+        scoreText.setCharacterSize(24);
+        scoreText.setFillColor(sf::Color::White);
+        scoreText.setString("Your score is : " + std::to_string(_ents.score));
+        scoreText.setPosition(cameraView.getCenter().x - (scoreText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y);
+        window.draw(scoreText);
+
+        sf::Color red(100, 40, 40);
+
+        float respawnButton_width = 250.f;
+        float respawnButton_height = 100.f;
+        respawnButton.setSize(sf::Vector2f(respawnButton_width, respawnButton_height));
+        respawnButton.setOrigin(respawnButton_width * .5f, respawnButton_height * .5f);
+        respawnButton.setFillColor(red);
+        respawnButton.setPosition(cameraView.getCenter().x, cameraView.getCenter().y + gameHeight * .3f);
+        window.draw(respawnButton);
+
+        sf::Text respawnButtonText;
+        respawnButtonText.setFont(font);
+        respawnButtonText.setCharacterSize(24);
+        respawnButtonText.setFillColor(sf::Color::White);
+        respawnButtonText.setString("RESPAWN");
+        respawnButtonText.setPosition(cameraView.getCenter().x - (respawnButtonText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y + gameHeight * .3f - (respawnButtonText.getLocalBounds().getSize().y / 2));
+        window.draw(respawnButtonText);
+
     } else {
         currentTime = scoreClock.getElapsedTime().asSeconds();
     }
