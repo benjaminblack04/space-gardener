@@ -41,7 +41,7 @@ private:
     //bool _alreadyLoad;
     void respawn();
 
-    //sf::Text scoreText;
+    sf::RectangleShape respawnButton;
 
 public:
     GameScene() = default;
