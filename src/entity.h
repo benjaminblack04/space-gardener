@@ -145,8 +145,8 @@ public:
 private:
     sf::ConvexShape shape; // Triangle rouge
     sf::Vector2f direction; // Direction de déplacement
-    float speed = 300.0f; // Vitesse
-    float lifetime = 2.0f; // Durée de vie
+    float speed = 400.0f; // Vitesse
+    float lifetime = 3.0f; // Durée de vie
     float timeElapsed = 0.0f;
 };
 
@@ -204,11 +204,11 @@ private:
     std::shared_ptr<Player> _player;
 
     std::vector<AttackShortEnemy> shortAttacks;
-    float shortAttackCooldown = 1.5f; // Temps entre deux attaques
+    float shortAttackCooldown = .5f; // Temps entre deux attaques
     float timeSinceLastShortAttack = 0.0f;
 
     std::vector<SwordAttack> swordAttacks; // Liste des attaques triangulaires
-    float swordAttackCooldown = 2.0f; // Temps entre deux attaques triangulaires
+    float swordAttackCooldown = 1.0f; // Temps entre deux attaques triangulaires
     float timeSinceLastSwordAttack = 0.0f; // Temps écoulé depuis la dernière attaque
 };
 

@@ -700,8 +700,8 @@ void Enemy::update(const float& dt) {
     float distance_player = std::sqrt(dx * dx + dy * dy);
 
     //// Définir une distance seuil
-    float threshold_move = 250.0f;
-    float threshold_short_attack = 100.0f;
+    float threshold_move = 350.0f;
+    float threshold_short_attack = 200.0f;
 
     float moveSpeed = .7f;
 
