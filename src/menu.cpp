@@ -17,6 +17,8 @@ int enemyLastSpawned = 0;
 
 float currentTime = 0;
 
+int enemiesKilled = 0;
+
 void MenuScene::load() {
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
@@ -164,6 +166,23 @@ void GameScene::render(sf::RenderWindow& window) {
 
     window.draw(time_overlay);
     window.draw(time_text);
+
+    // Kill count
+    sf::Text kills_text;
+    kills_text.setFont(font);
+    kills_text.setCharacterSize(24);
+    kills_text.setFillColor(sf::Color::White);
+    kills_text.setString("Kills: " + std::to_string(enemiesKilled));
+    kills_text.setPosition(cameraView.getCenter().x - (kills_text.getLocalBounds().getSize().x / 2),
+                          cameraView.getCenter().y + 200);
+
+    sf::RectangleShape kills_overlay({floor(kills_text.getLocalBounds().getSize().x + 10),
+                                          45});
+    kills_overlay.setFillColor(sf::Color(0, 0, 0, 190)); // Couleur semi-transparente
+    kills_overlay.setPosition(kills_text.getPosition().x - 5, kills_text.getPosition().y - 5);
+
+    window.draw(kills_overlay);
+    window.draw(kills_text);
 
     // Si le joueur est mort, ajouter un overlay semi-transparent
     if (!player->isAlive()) {
