@@ -150,7 +150,6 @@ void EntityManager::update(double dt) {
     }
 
     if (!player) {
-        std::cerr << "Erreur : Joueur non trouvé dans EntityManager." << std::endl;
         return; // Ne pas continuer si le joueur n'est pas trouvé
     }
 
