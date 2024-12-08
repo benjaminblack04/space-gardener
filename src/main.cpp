@@ -10,7 +10,7 @@ void Reset() {
 
 }
 
-void load(sf::RenderWindow& window) {
+void load(RenderWindow& window) {
     initScenes();
     activeScene->load();
 
@@ -22,19 +22,13 @@ void load(sf::RenderWindow& window) {
     Reset();
 }
 
-void Update(RenderWindow& window) {
-    // Reset clock, recalculate deltatime
+void Update() {
+    // Reset clock, recalculate delta time
     static Clock clock;
     float dt = clock.restart().asSeconds();
-    // check and consume events
-    Event event;
 
-    while (window.pollEvent(event)) {
-        if (event.type == Event::Closed) {
-            window.close();
-            return;
-        }
-    }
+    // Game is active
+    // std::cout << "Game is active" << std::endl;
 
     if (Keyboard::isKeyPressed(Keyboard::Enter)) {
         if (activeScene == menuScene) {
@@ -66,10 +60,13 @@ int main() {
     load(window);
 
     while (window.isOpen()) {
-        window.clear();
-        Update(window);
-        Render(window);
-        window.display();
+        // Pause while tabbed out
+        // if (gameFocused) {
+            window.clear();
+            Update();
+            Render(window);
+            window.display();
+        // }
     }
 
     return 0;

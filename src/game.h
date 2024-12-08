@@ -5,8 +5,6 @@
 using namespace std;
 using namespace sf;
 
-
-
 const int gameWidth = 800;
 const int gameHeight = 600;
 
