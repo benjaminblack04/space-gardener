@@ -11,20 +11,20 @@ void Reset() {
 }
 
 void load(RenderWindow& window) {
-    std::cout << "[load] Loading scenes..." << std::endl;
+    std::clog << "[load] Loading scenes..." << std::endl;
     initScenes();
 
-    std::cout << "[load] Loading active scene..." << std::endl;
+    std::clog << "[load] Loading active scene..." << std::endl;
     activeScene->load();
 
-    std::cout << "[load] Loading level..." << std::endl;
+    std::clog << "[load] Loading level..." << std::endl;
     ls::loadLevelFile("res/levels/arena.xml");
 
-    std::cout << "[load] Setting scene windows..." << std::endl;
+    std::clog << "[load] Setting scene windows..." << std::endl;
     menuScene->setWindow(window);
     gameScene->setWindow(window);
 
-    std::cout << "[load] Calling reset..." << std::endl;
+    std::clog << "[load] Calling reset..." << std::endl;
     Reset();
 }
 
@@ -44,28 +44,28 @@ void Update(RenderWindow& window) {
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Enter)) {
-        std::cout << "[Update] Enter key pressed" << std::endl;
+        std::clog << "[Update] Enter key pressed" << std::endl;
         if (activeScene == menuScene) {
             activeScene = gameScene;
             activeScene->load();
         }
     }
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-        std::cout << "[Update] Enter key pressed" << std::endl;
+        std::clog << "[Update] Enter key pressed" << std::endl;
         if (activeScene == gameScene) {
             activeScene = menuScene;
             activeScene->load();
         }
     }
 
-    std::cout << "[Update] calling scene update" << std::endl;
+    std::clog << "[Update] calling scene update" << std::endl;
     activeScene->update(dt);
 }
 
 void Render(RenderWindow& window) {
-    std::cout << "[Render] calling scene render" << std::endl;
+    std::clog << "[Render] calling scene render" << std::endl;
     activeScene->render(window);
-    std::cout << "[Render] called scene render" << std::endl;
+    std::clog << "[Render] called scene render" << std::endl;
 }
 
 int main() {
@@ -73,29 +73,29 @@ int main() {
 
     window.setFramerateLimit(fps_limit);
 
-    std::cout << "Loading game..." << std::endl;
+    std::clog << "Loading game..." << std::endl;
     load(window);
 
     while (window.isOpen()) {
-        std::cout << "Game frame is running..." << std::endl;
+        std::clog << "Game frame is running..." << std::endl;
 
         // Clear window
         window.clear();
 
         // Draw new frame
-        std::cout << "Game frame is ready for update..." << std::endl;
+        std::clog << "Game frame is ready for update..." << std::endl;
         Update(window);
 
-        std::cout << "Game frame is ready for render..." << std::endl;
+        std::clog << "Game frame is ready for render..." << std::endl;
 
         Render(window);
 
-        std::cout << "Game frame is ready for display..." << std::endl;
+        std::clog << "Game frame is ready for display..." << std::endl;
 
         // Display window
         window.display();
 
-        std::cout << "Game frame is finished..." << std::endl;
+        std::clog << "Game frame is finished..." << std::endl;
 
     }
 

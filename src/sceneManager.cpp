@@ -48,7 +48,7 @@ void MenuScene::load() {
 }
 
 void MenuScene::update(double dt) {
-    std::cout << "MenuScene::update" << std::endl;
+    std::clog << "MenuScene::update" << std::endl;
 
     Scene::update(dt);
 
@@ -57,13 +57,13 @@ void MenuScene::update(double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::cout << "[Update] Trying to load game" << std::endl;
+            std::clog << "[Update] Trying to load game" << std::endl;
             activeScene = gameScene;
             activeScene->load();
         }
 
         if (menu_exit_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::cout << "[Update] Trying to close game" << std::endl;
+            std::clog << "[Update] Trying to close game" << std::endl;
             window->close();
         }
 
@@ -71,7 +71,7 @@ void MenuScene::update(double dt) {
 }
 
 void MenuScene::render(RenderWindow& window) {
-    std::cout << "MenuScene::render" << std::endl;
+    std::clog << "MenuScene::render" << std::endl;
     // Set up camera view to render the menu
     window.setView(cameraView);
 
@@ -96,7 +96,7 @@ void MenuScene::render(RenderWindow& window) {
     // Draw the scene
     // Note: button must be drawn first, as to not be on top of the text/label.
     Scene::render(window);
-    std::cout << "MenuScene::render [complete]" << std::endl;
+    std::clog << "MenuScene::render [complete]" << std::endl;
 
 }
 
