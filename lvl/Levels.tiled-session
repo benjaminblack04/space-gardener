@@ -22,11 +22,11 @@
             "scaleInEditor": 5.7387
         },
         "arena.tmx": {
-            "scale": 1.5595,
-            "selectedLayer": 1,
+            "scale": 1.7196,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 593.1388265469702,
-                "y": 352.6771401090093
+                "x": 788.5554780181437,
+                "y": 404.7452896022331
             }
         }
     },
@@ -35,19 +35,18 @@
     "map.height": 40,
     "map.lastUsedExportFilter": "Tiled map files (*.tmx *.xml)",
     "map.lastUsedFormat": "tmx",
-    "map.orientation": "2",
+    "map.orientation": "1",
     "map.tileHeight": 17,
     "map.width": 40,
     "openFiles": [
-        "Test_level.tmx",
         "Tileset.tsx",
         "arena.tmx"
     ],
     "project": "Levels.tiled-project",
     "recentFiles": [
-        "Test_level.tmx",
         "Tileset.tsx",
-        "arena.tmx"
+        "arena.tmx",
+        "Test_level.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
