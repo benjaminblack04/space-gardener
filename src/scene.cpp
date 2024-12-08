@@ -3,10 +3,12 @@
 
 
 void Scene::update(double dt) {
+    std::cout << "Scene::update" << std::endl;
     _ents.update(dt);
 }
 
 void Scene::render(sf::RenderWindow& window) {
+    std::cout << "Scene::render" << std::endl;
     _ents.render(window);
 }
 

@@ -66,7 +66,6 @@ void LevelSystem::loadLevelFile(const char* path) {
     doc.LoadFile(path);
 
     int map_width = doc.FirstChildElement("map")->FindAttribute("width")->Int64Value();
-    int tilemap_width = 8;
 
     XMLNode* layer = doc.FirstChildElement("map")->FirstChildElement("layer");
     XMLNode* objects = doc.FirstChildElement("map")->FirstChildElement("objectgroup");
@@ -74,7 +73,7 @@ void LevelSystem::loadLevelFile(const char* path) {
     while (layer != nullptr) {
         std::vector<std::string> map_data = tokenizeString(layer->FirstChildElement("data")->GetText(), ',');
 
-        std::vector<std::unique_ptr<sf::Sprite>> temp_tiles;
+        std::vector<std::unique_ptr<Sprite>> temp_tiles;
 
         float x = 0;
         float y = 0;

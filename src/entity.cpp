@@ -139,6 +139,7 @@ bool isCollidingAttack(const sf::Shape& shape, const Entity& entity) {
 
 
 void EntityManager::update(double dt) {
+    std::cout << "EntityManager::update" << std::endl;
     // Obtenir le joueur
     Player* player = nullptr;
     for (auto& entity : list) {
@@ -149,7 +150,7 @@ void EntityManager::update(double dt) {
     }
 
     if (!player) {
-        //std::cerr << "Erreur : Joueur non trouvé dans EntityManager." << std::endl;
+        std::cerr << "Erreur : Joueur non trouvé dans EntityManager." << std::endl;
         return; // Ne pas continuer si le joueur n'est pas trouvé
     }
 
@@ -278,7 +279,9 @@ void EntityManager::update(double dt) {
 
 
 void EntityManager::render(sf::RenderWindow& window) {
+    std::cout << "EntityManager::render" << std::endl;
     for (auto& entity : list) {
+        std::cout << "Entity::render" << std::endl;
         entity->render(window);
     }
 }

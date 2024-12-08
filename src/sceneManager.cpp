@@ -12,7 +12,7 @@
 #include "graphicsHelpers.h"
 
 // Définitions des scènes
-// std::shared_ptr<Scene> gameScene;
+std::shared_ptr<Scene> gameScene;
 std::shared_ptr<Scene> menuScene;
 
 // Active scene
@@ -48,8 +48,8 @@ void MenuScene::load() {
 }
 
 void MenuScene::update(double dt) {
-
     std::cout << "MenuScene::update" << std::endl;
+
     Scene::update(dt);
 
     if (Mouse::isButtonPressed(Mouse::Left)) {
@@ -58,12 +58,14 @@ void MenuScene::update(double dt) {
 
         if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
             std::cout << "[Update] Trying to load game" << std::endl;
-            //activeScene = gameScene;
-            //activeScene->load();
+            activeScene = gameScene;
+            activeScene->load();
         }
 
-        if (menu_exit_button.getGlobalBounds().contains(globalMousePosition))
+        if (menu_exit_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::cout << "[Update] Trying to close game" << std::endl;
             window->close();
+        }
 
     }
 }
@@ -94,6 +96,8 @@ void MenuScene::render(RenderWindow& window) {
     // Draw the scene
     // Note: button must be drawn first, as to not be on top of the text/label.
     Scene::render(window);
+    std::cout << "MenuScene::render [complete]" << std::endl;
+
 }
 
 void GameScene::load() {
@@ -125,6 +129,7 @@ void GameScene::load() {
                     wall = ls::getObject(i);
                 }
             } catch(exception e) {
+                std:cerr << "Error: " << e.what() << std::endl;
                 return;
             }
 
@@ -235,7 +240,7 @@ void GameScene::render(RenderWindow& window) {
             wall = ls::getObject(i);
         }
     } catch(exception e) {
-
+        std:cerr << "Error: " << e.what() << std::endl;
     }
     #endif
 
@@ -317,7 +322,7 @@ void GameScene::respawn() {
 // Initialiser les scènes
 void initScenes() {
     menuScene = std::make_shared<MenuScene>();
-    //gameScene = std::make_shared<GameScene>();
+    gameScene = std::make_shared<GameScene>();
 
     activeScene = menuScene; // Par défaut, commence par la scène de menu
 }

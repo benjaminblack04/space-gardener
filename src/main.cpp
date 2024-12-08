@@ -22,32 +22,40 @@ void load(RenderWindow& window) {
 
     std::cout << "[load] Setting scene windows..." << std::endl;
     menuScene->setWindow(window);
-    //gameScene->setWindow(window);
+    gameScene->setWindow(window);
 
     std::cout << "[load] Calling reset..." << std::endl;
     Reset();
 }
 
-void Update() {
+void Update(RenderWindow& window) {
     // Reset clock, recalculate delta time
     static Clock clock;
     float dt = clock.restart().asSeconds();
 
+    // check and consume events
+    Event event;
+
+    while (window.pollEvent(event)) {
+        if (event.type == Event::Closed) {
+            window.close();
+            return;
+        }
+    }
 
     if (Keyboard::isKeyPressed(Keyboard::Enter)) {
         std::cout << "[Update] Enter key pressed" << std::endl;
         if (activeScene == menuScene) {
-            std::cout << "[Update] Trying to load game" << std::endl;
-            //activeScene = gameScene;
-            //activeScene->load();
+            activeScene = gameScene;
+            activeScene->load();
         }
     }
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
         std::cout << "[Update] Enter key pressed" << std::endl;
-        // if (activeScene == gameScene) {
-        //     activeScene = menuScene;
-        //     activeScene->load();
-        // }
+        if (activeScene == gameScene) {
+            activeScene = menuScene;
+            activeScene->load();
+        }
     }
 
     std::cout << "[Update] calling scene update" << std::endl;
@@ -57,25 +65,38 @@ void Update() {
 void Render(RenderWindow& window) {
     std::cout << "[Render] calling scene render" << std::endl;
     activeScene->render(window);
+    std::cout << "[Render] called scene render" << std::endl;
 }
 
 int main() {
     RenderWindow window(VideoMode({ gameWidth, gameHeight }), "Space Gardener");
 
-    //window.setFramerateLimit(fps_limit);
+    window.setFramerateLimit(fps_limit);
 
     std::cout << "Loading game..." << std::endl;
     load(window);
 
     while (window.isOpen()) {
-        std::cout << "Game is running..." << std::endl;
-        // Pause while tabbed out
-        // if (gameFocused) {
-            window.clear();
-            Update();
-            Render(window);
-            window.display();
-        // }
+        std::cout << "Game frame is running..." << std::endl;
+
+        // Clear window
+        window.clear();
+
+        // Draw new frame
+        std::cout << "Game frame is ready for update..." << std::endl;
+        Update(window);
+
+        std::cout << "Game frame is ready for render..." << std::endl;
+
+        Render(window);
+
+        std::cout << "Game frame is ready for display..." << std::endl;
+
+        // Display window
+        window.display();
+
+        std::cout << "Game frame is finished..." << std::endl;
+
     }
 
     return 0;

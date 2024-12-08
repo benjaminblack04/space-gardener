@@ -6,7 +6,7 @@
 #include "scene.h"
 #include "game.h"
 
-// extern std::shared_ptr<Scene> gameScene;
+extern std::shared_ptr<Scene> gameScene;
 extern std::shared_ptr<Scene> menuScene;
 extern std::shared_ptr<Scene> activeScene;
 
