@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "menu.h"
+#include "sceneManager.h"
 #include "scene.h"
 #include "LevelSystem.h"
 #include "misc.h"
