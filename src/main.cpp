@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "scene.h"
 #include "LevelSystem.h"
+#include "misc.h"
 
 void Reset() {
 
@@ -59,6 +60,8 @@ void Render(RenderWindow& window) {
 
 int main() {
     RenderWindow window(VideoMode({ gameWidth, gameHeight }), "Space Gardener");
+
+    window.setFramerateLimit(fps_limit);
 
     load(window);
 

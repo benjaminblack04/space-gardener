@@ -4,6 +4,8 @@
 #include "entity.h"
 #include "LevelSystem.h"
 #include "game.h"
+#include "misc.h"
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <iomanip>
 #include <stdlib.h>s
 
@@ -129,6 +131,19 @@ void GameScene::load() {
             player->setPosition({150, 650});
             _ents.list.push_back(player);
 
+            try {
+                int i = 0;
+                auto wall = ls::getObject(i);
+
+                while (wall.getScale().x > 0) {
+                    player->addWall(wall);
+                    i++;
+                    wall = ls::getObject(i);
+                }
+            } catch(exception e) {
+                return;
+            }
+
             return;
         }
 
@@ -231,6 +246,21 @@ void GameScene::render(sf::RenderWindow& window) {
 
     window.draw(time_overlay);
     window.draw(time_text);
+
+    #ifdef __DEBUG_SHOW_WALLS__
+    try {
+        int i = 0;
+        auto wall = ls::getObject(i);
+
+        while (wall.getScale().x > 0) {
+            window.draw(wall);
+            i++;
+            wall = ls::getObject(i);
+        }
+    } catch(exception e) {
+
+    }
+    #endif
 
     // Kill count
     sf::Text kills_text;

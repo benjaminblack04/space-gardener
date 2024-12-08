@@ -1,21 +1,25 @@
 #include "LevelSystem.h"
 #include "misc.h"
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <tinyxml2.h>
 #include <tuple>
+#include <vector>
 
 using namespace std;
 using namespace sf;
 using namespace tinyxml2;
 
 std::vector<std::vector<std::unique_ptr<sf::Sprite>>> LevelSystem::_tiles;
-std::vector<std::tuple<std::string, sf::Vector2f, sf::Vector2f>> LevelSystem::_objects;
+std::vector<sf::RectangleShape> LevelSystem::_objects;
 
 std::vector<std::unique_ptr<sf::Texture>> tileset;
 
@@ -107,13 +111,18 @@ void LevelSystem::loadLevelFile(const char* path) {
         auto object = objects->FirstChildElement("object");
 
         while (object != NULL) {
+            auto x = std::stoi(object->Attribute("x")) / 17;
+            auto y = std::stoi(object->Attribute("y")) / 17;
 
-            std::tuple<std::string, sf::Vector2f, sf::Vector2f> o = std::make_tuple(object->Attribute("name"),
-                                                                                    sf::Vector2f((-std::stoi(object->Attribute("x"))),
-                                                                                                 (std::stoi(object->Attribute("y")) / 2)),
-                                                                                    sf::Vector2f(std::stoi(object->Attribute("width")) * sprite_scale,
-                                                                                                 std::stoi(object->Attribute("height")) * sprite_scale));
-            _objects.push_back(o);
+            float newX = (x - y) * (32 / 2) * sprite_scale;
+            float newY = (y + x) * (17 / 2) * sprite_scale;
+
+            auto o = new sf::RectangleShape();
+            o->setPosition(newX, newY);
+            o->setSize({(std::stoi(object->Attribute("width")) * sprite_scale + 12),
+                        (std::stoi(object->Attribute("height")) * sprite_scale + 12)});
+
+            _objects.push_back(*o);
 
             object = object->NextSiblingElement("object");
         }
@@ -122,21 +131,19 @@ void LevelSystem::loadLevelFile(const char* path) {
     }
 }
 
-std::tuple<std::string, sf::Vector2f, sf::Vector2f> LevelSystem::getObject(std::string name, int index) {
+sf::RectangleShape LevelSystem::getObject(int index) {
     int temp = 0;
 
     for (int i = 0; i < _objects.size(); i++) {
-        if (std::get<0>(_objects[i]) == name) {
-            if (temp < index) {
-                temp++;
-                continue;
-            } else {
-                return _objects[i];
-            }
+        if (temp < index) {
+            temp++;
+            continue;
+        } else {
+            return _objects[i];
         }
     }
 
-    return std::make_tuple("", sf::Vector2f(), sf::Vector2f());
+    throw length_error("There is no object at that index");
 }
 
 void LevelSystem::Render(RenderWindow &window) {
