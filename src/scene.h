@@ -23,6 +23,7 @@ protected:
     EntityManager _ents;
     bool _alreadyLoad = false;
     sf::RenderWindow* window = nullptr;
+    sf::Font font;
 };
 
 

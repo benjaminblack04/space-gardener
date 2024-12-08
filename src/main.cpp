@@ -6,6 +6,8 @@
 #include "LevelSystem.h"
 #include "misc.h"
 
+bool leftMouseButtonPressed = false;
+
 void Reset() {
 
 }
@@ -22,6 +24,12 @@ void load(RenderWindow& window) {
 
     std::clog << "[load] Setting scene windows..." << std::endl;
     menuScene->setWindow(window);
+
+    mainSettingsScene->setWindow(window);
+    videoSettingsScene->setWindow(window);
+    audioSettingsScene->setWindow(window);
+    inputSettingsScene->setWindow(window);
+
     gameScene->setWindow(window);
 
     std::clog << "[load] Calling reset..." << std::endl;
@@ -34,38 +42,45 @@ void Update(RenderWindow& window) {
     float dt = clock.restart().asSeconds();
 
     // check and consume events
-    Event event;
+    Event event{};
 
     while (window.pollEvent(event)) {
-        if (event.type == Event::Closed) {
-            window.close();
-            return;
+        switch (event.type) {
+            case Event::Closed: {
+                window.close();
+                return;
+            }
+            case Event::MouseButtonPressed: {
+                if (event.mouseButton.button == Mouse::Left) {
+                    leftMouseButtonPressed = true;
+                }
+
+                break;
+            }
+            case Event::MouseButtonReleased: {
+                if (event.mouseButton.button == Mouse::Left) {
+                    leftMouseButtonPressed = false;
+                }
+
+                break;
+            }
+            default: break;
         }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Enter)) {
-        std::clog << "[Update] Enter key pressed" << std::endl;
-        if (activeScene == menuScene) {
-            activeScene = gameScene;
-            activeScene->load();
-        }
-    }
     if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-        std::clog << "[Update] Enter key pressed" << std::endl;
+        std::clog << "[Update] Escape key pressed" << std::endl;
         if (activeScene == gameScene) {
             activeScene = menuScene;
             activeScene->load();
         }
     }
 
-    std::clog << "[Update] calling scene update" << std::endl;
     activeScene->update(dt);
 }
 
 void Render(RenderWindow& window) {
-    std::clog << "[Render] calling scene render" << std::endl;
     activeScene->render(window);
-    std::clog << "[Render] called scene render" << std::endl;
 }
 
 int main() {
@@ -77,26 +92,15 @@ int main() {
     load(window);
 
     while (window.isOpen()) {
-        std::clog << "Game frame is running..." << std::endl;
-
         // Clear window
         window.clear();
 
         // Draw new frame
-        std::clog << "Game frame is ready for update..." << std::endl;
         Update(window);
-
-        std::clog << "Game frame is ready for render..." << std::endl;
-
         Render(window);
-
-        std::clog << "Game frame is ready for display..." << std::endl;
 
         // Display window
         window.display();
-
-        std::clog << "Game frame is finished..." << std::endl;
-
     }
 
     return 0;

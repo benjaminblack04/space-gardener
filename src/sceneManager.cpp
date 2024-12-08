@@ -12,8 +12,14 @@
 #include "graphicsHelpers.h"
 
 // Définitions des scènes
-std::shared_ptr<Scene> gameScene;
 std::shared_ptr<Scene> menuScene;
+
+std::shared_ptr<Scene> mainSettingsScene;
+std::shared_ptr<Scene> videoSettingsScene;
+std::shared_ptr<Scene> audioSettingsScene;
+std::shared_ptr<Scene> inputSettingsScene;
+
+std::shared_ptr<Scene> gameScene;
 
 // Active scene
 std::shared_ptr<Scene> activeScene;
@@ -48,17 +54,22 @@ void MenuScene::load() {
 }
 
 void MenuScene::update(double dt) {
-    std::clog << "MenuScene::update" << std::endl;
-
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left)) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load game" << std::endl;
+            std::clog << "[Update] Trying to load game scene" << std::endl;
             activeScene = gameScene;
+            activeScene->load();
+        }
+
+        if (menu_settings_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            activeScene = mainSettingsScene;
             activeScene->load();
         }
 
@@ -71,7 +82,6 @@ void MenuScene::update(double dt) {
 }
 
 void MenuScene::render(RenderWindow& window) {
-    std::clog << "MenuScene::render" << std::endl;
     // Set up camera view to render the menu
     window.setView(cameraView);
 
@@ -96,8 +106,242 @@ void MenuScene::render(RenderWindow& window) {
     // Draw the scene
     // Note: button must be drawn first, as to not be on top of the text/label.
     Scene::render(window);
-    std::clog << "MenuScene::render [complete]" << std::endl;
+}
 
+void MainSettingsScene::load() {
+    if (_alreadyLoad == false) {
+        _alreadyLoad = true;
+        // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
+        if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
+            std::cerr << "Error: Font not found!" << std::endl;
+            return; // Quitter si la police ne peut pas être chargée
+        }
+
+        const Color gris(128, 128, 200);
+
+        setMenuButton(settings_video_button, settings_video_text, gris, Color::White, font, 28, "Video Settings", gameWidth, gameHeight, 400);
+        setMenuButton(settings_audio_button, settings_audio_text, gris, Color::White, font, 28, "Audio Settings", gameWidth, gameHeight, 300);
+        setMenuButton(settings_input_button, settings_input_text, gris, Color::White, font, 28, "Input Settings", gameWidth, gameHeight, 200);
+
+        setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Settings", gameWidth, gameHeight, 500);
+    }
+
+    cameraView.setSize(gameWidth, gameHeight);
+    cameraView.setCenter(gameWidth * 0.5f, gameHeight * 0.5f);
+}
+
+void MainSettingsScene::update(const double dt) {
+    Scene::update(dt);
+
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
+        const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
+        const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
+
+        if (settings_video_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load video settings scene" << std::endl;
+            activeScene = videoSettingsScene;
+            activeScene->load();
+        }
+
+        if (settings_audio_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load audio settings scene" << std::endl;
+            activeScene = audioSettingsScene;
+            activeScene->load();
+        }
+
+        if (settings_input_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load input settings scene" << std::endl;
+            activeScene = inputSettingsScene;
+            activeScene->load();
+        }
+
+        if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load menu scene" << std::endl;
+            activeScene = menuScene;
+            activeScene->load();
+        }
+    }
+}
+
+void MainSettingsScene::render(RenderWindow& window) {
+    // Set up camera view to render the menu
+    window.setView(cameraView);
+
+    // Game title
+    window.draw(settings_title_text);
+
+    // Video settings
+    window.draw(settings_video_button);
+    window.draw(settings_video_text);
+
+    // Audio settings
+    window.draw(settings_audio_button);
+    window.draw(settings_audio_text);
+
+    // Input settings
+    window.draw(settings_input_button);
+    window.draw(settings_input_text);
+
+    // Back button
+    window.draw(settings_back_button);
+    window.draw(settings_back_text);
+
+    // Draw the scene
+    // Note: button must be drawn first, as to not be on top of the text/label.
+    Scene::render(window);
+}
+
+void VideoSettingsScene::load() {
+    if (_alreadyLoad == false) {
+        _alreadyLoad = true;
+        // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
+        if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
+            std::cerr << "Error: Font not found!" << std::endl;
+            return; // Quitter si la police ne peut pas être chargée
+        }
+
+        setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Video Settings", gameWidth, gameHeight, 500);
+    }
+
+    cameraView.setSize(gameWidth, gameHeight);
+    cameraView.setCenter(gameWidth * 0.5f, gameHeight * 0.5f);
+}
+
+void VideoSettingsScene::update(const double dt) {
+    Scene::update(dt);
+
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
+        const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
+        const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
+
+        if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            activeScene = mainSettingsScene;
+            activeScene->load();
+        }
+    }
+}
+
+void VideoSettingsScene::render(RenderWindow& window) {
+    // Set up camera view to render the menu
+    window.setView(cameraView);
+
+    // Game title
+    window.draw(settings_title_text);
+
+    // Back button
+    window.draw(settings_back_button);
+    window.draw(settings_back_text);
+
+    // Draw the scene
+    // Note: button must be drawn first, as to not be on top of the text/label.
+    Scene::render(window);
+}
+
+void AudioSettingsScene::load() {
+    if (_alreadyLoad == false) {
+        _alreadyLoad = true;
+        // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
+        if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
+            std::cerr << "Error: Font not found!" << std::endl;
+            return; // Quitter si la police ne peut pas être chargée
+        }
+
+        setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Audio Settings", gameWidth, gameHeight, 500);
+    }
+
+    cameraView.setSize(gameWidth, gameHeight);
+    cameraView.setCenter(gameWidth * 0.5f, gameHeight * 0.5f);
+}
+
+void AudioSettingsScene::update(const double dt) {
+    Scene::update(dt);
+
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
+        const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
+        const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
+
+        if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            activeScene = mainSettingsScene;
+            activeScene->load();
+        }
+    }
+}
+
+void AudioSettingsScene::render(RenderWindow& window) {
+    // Set up camera view to render the menu
+    window.setView(cameraView);
+
+    // Game title
+    window.draw(settings_title_text);
+
+    // Back button
+    window.draw(settings_back_button);
+    window.draw(settings_back_text);
+
+    // Draw the scene
+    // Note: button must be drawn first, as to not be on top of the text/label.
+    Scene::render(window);
+}
+
+void InputSettingsScene::load() {
+    if (_alreadyLoad == false) {
+        _alreadyLoad = true;
+        // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
+        if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
+            std::cerr << "Error: Font not found!" << std::endl;
+            return; // Quitter si la police ne peut pas être chargée
+        }
+
+        setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Input Settings", gameWidth, gameHeight, 500);
+    }
+
+    cameraView.setSize(gameWidth, gameHeight);
+    cameraView.setCenter(gameWidth * 0.5f, gameHeight * 0.5f);
+}
+
+void InputSettingsScene::update(const double dt) {
+    Scene::update(dt);
+
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
+        const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
+        const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
+
+        if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
+            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            activeScene = mainSettingsScene;
+            activeScene->load();
+        }
+    }
+}
+
+void InputSettingsScene::render(RenderWindow& window) {
+    // Set up camera view to render the menu
+    window.setView(cameraView);
+
+    // Game title
+    window.draw(settings_title_text);
+
+    // Back button
+    window.draw(settings_back_button);
+    window.draw(settings_back_text);
+
+    // Draw the scene
+    // Note: button must be drawn first, as to not be on top of the text/label.
+    Scene::render(window);
 }
 
 void GameScene::load() {
@@ -154,7 +398,8 @@ void GameScene::update(double dt) {
         if (Keyboard::isKeyPressed(Keyboard::R)) {
             respawn();
         }
-        if (Mouse::isButtonPressed(Mouse::Left)) {
+        if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+        leftMouseButtonPressed = false;
             Vector2i mousePos = Mouse::getPosition(*window); // Position de la souris
             Vector2f worldPos = window->mapPixelToCoords(mousePos);
             if (respawnButton.getGlobalBounds().contains(worldPos)) {
@@ -322,6 +567,13 @@ void GameScene::respawn() {
 // Initialiser les scènes
 void initScenes() {
     menuScene = std::make_shared<MenuScene>();
+
+    //
+    mainSettingsScene = std::make_shared<MainSettingsScene>();
+    videoSettingsScene = std::make_shared<VideoSettingsScene>();
+    audioSettingsScene = std::make_shared<AudioSettingsScene>();
+    inputSettingsScene = std::make_shared<InputSettingsScene>();
+
     gameScene = std::make_shared<GameScene>();
 
     activeScene = menuScene; // Par défaut, commence par la scène de menu
