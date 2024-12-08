@@ -119,8 +119,8 @@ void LevelSystem::loadLevelFile(const char* path) {
 
             auto o = new sf::RectangleShape();
             o->setPosition(newX, newY);
-            o->setSize({(std::stoi(object->Attribute("width")) * sprite_scale + 12),
-                        (std::stoi(object->Attribute("height")) * sprite_scale + 12)});
+            o->setSize({static_cast<float>(std::stoi(object->Attribute("width")) * sprite_scale + 12),
+                    static_cast<float>(std::stoi(object->Attribute("height")) * sprite_scale + 12)});
 
             _objects.push_back(*o);
 
