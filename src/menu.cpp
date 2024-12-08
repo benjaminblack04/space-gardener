@@ -7,14 +7,18 @@
 #include "misc.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iomanip>
-#include <stdlib.h>
+#include <cstdlib>
+
+#include "graphicsHelpers.h"
 
 // Définitions des scènes
 std::shared_ptr<Scene> gameScene;
 std::shared_ptr<Scene> menuScene;
+
+// Active scene
 std::shared_ptr<Scene> activeScene;
 
-sf::View cameraView;
+View cameraView;
 
 int enemyLastSpawned = 0;
 
@@ -27,84 +31,65 @@ void MenuScene::load() {
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
             std::cerr << "Error: Font not found!" << std::endl;
             return; // Quitter si la police ne peut pas être chargée
-
         }
-        menu_text.setFont(font);
-        menu_text.setCharacterSize(50);
-        menu_text.setFillColor(sf::Color::Yellow);
-        menu_text.setString("Space Gardener");  // Texte initial
-        menu_text.setPosition((gameWidth / 2) - (menu_text.getLocalBounds().width / 2), 150);       // Position du texte
-        menu_text.setOrigin(menu_text.getLocalBounds().width / 2, menu_text.getLocalBounds().height / 2);
-        menu_text.setPosition(gameWidth * .5f, gameHeight * .2f);
 
-        credit_text.setFont(font);
-        credit_text.setCharacterSize(28);
-        credit_text.setFillColor(sf::Color::White);
-        credit_text.setString("Benjamin & Thibault");
-        credit_text.setOrigin(credit_text.getLocalBounds().width / 2, credit_text.getLocalBounds().height / 2);
-        credit_text.setPosition(gameWidth * .5f, gameHeight * .85f);
+        const Color gris(128, 128, 200);
 
-        sf::Color gris(128, 128, 200);
+        setMenuButton(menu_start_button, menu_start_text, gris, Color::White, font, 28, "Press to Start", gameWidth, gameHeight, 400);
+        setMenuButton(menu_settings_button, menu_settings_text, gris, Color::White, font, 28, "Settings", gameWidth, gameHeight, 200);
+        setMenuButton(menu_exit_button, menu_exit_text, Color::White, Color::Red, font, 28, "Exit", gameWidth, gameHeight, 50);
 
-        float playButton_width = 250.f;
-        float playButton_height = 100.f;
-        playButton.setSize(sf::Vector2f(playButton_width, playButton_height));
-        playButton.setOrigin(playButton_width * .5f, playButton_height * .5f);
-        playButton.setFillColor(gris);
-        playButton.setPosition(gameWidth * .5f, gameHeight * .5f);
-
-        playButton_text.setFont(font);
-        playButton_text.setCharacterSize(30);
-        playButton_text.setFillColor(sf::Color::White);
-        playButton_text.setString("PLAY");
-        playButton_text.setOrigin(playButton_text.getLocalBounds().width / 2, playButton_text.getLocalBounds().height);
-        playButton_text.setPosition(gameWidth * .5f, gameHeight * .5f);
-
-        float quitButton_width = 250.f;
-        float quitButton_height = 100.f;
-        quitButton.setSize(sf::Vector2f(quitButton_width, quitButton_height));
-        quitButton.setOrigin(quitButton_width * .5f, quitButton_height * .5f);
-        quitButton.setFillColor(gris);
-        quitButton.setPosition(gameWidth * .5f, gameHeight * .7f);
-
-        quitButton_text.setFont(font);
-        quitButton_text.setCharacterSize(30);
-        quitButton_text.setFillColor(sf::Color::White);
-        quitButton_text.setString("QUIT");
-        quitButton_text.setOrigin(quitButton_text.getLocalBounds().width / 2, quitButton_text.getLocalBounds().height);
-        quitButton_text.setPosition(gameWidth * .5f, gameHeight * .7f);
+        setMenuText(menu_title_text, font, 50, Color::Yellow, "Space Gardener", gameWidth, gameHeight, 500);
+        setMenuText(credit_text, font, 14, Color::White, "Benjamin & Thibault", gameWidth, gameHeight, 300);
     }
 
     cameraView.setSize(gameWidth, gameHeight);
-    cameraView.setCenter(gameWidth * .5f, gameHeight * .5f);
+    cameraView.setCenter(gameWidth * 0.5f, gameHeight * 0.5f);
 }
 
 void MenuScene::update(double dt) {
     Scene::update(dt);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(*window); // Position de la souris
-        sf::Vector2f worldPos = window->mapPixelToCoords(mousePos);
+    if (Mouse::isButtonPressed(Mouse::Left)) {
+        const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
+        const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
-        if (playButton.getGlobalBounds().contains(worldPos)) {
+        if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
             activeScene = gameScene;
             activeScene->load();
         }
-        if (quitButton.getGlobalBounds().contains(worldPos)) {
+
+        if (menu_exit_button.getGlobalBounds().contains(globalMousePosition))
             window->close();
-        }
+
     }
 }
 
-void MenuScene::render(sf::RenderWindow& window) {
+void MenuScene::render(RenderWindow& window) {
+    // Set up camera view to render the menu
     window.setView(cameraView);
-    window.draw(menu_text);   // Afficher le texte du menu
+
+    // Game title
+    window.draw(menu_title_text);
+
+    // Draw the start button
+    window.draw(menu_start_button);
+    window.draw(menu_start_text);
+
+    // Game Credits
     window.draw(credit_text);
-    window.draw(playButton);
-    window.draw(quitButton);
-    window.draw(playButton_text);
-    window.draw(quitButton_text);
-    Scene::render(window);  // Rendu des autres entités si besoin
+
+    // Game settings
+    window.draw(menu_settings_button);
+    window.draw(menu_settings_text);
+
+    // Exit button
+    window.draw(menu_exit_button);
+    window.draw(menu_exit_text);
+
+    // Draw the scene
+    // Note: button must be drawn first, as to not be on top of the text/label.
+    Scene::render(window);
 }
 
 void GameScene::load() {
@@ -116,18 +101,13 @@ void GameScene::load() {
 
         // Charger la police pour le texte du score
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            // Gérer l'erreur de chargement de la police
+            std::cerr << "Error: Font not found!" << std::endl;
+            return;
         }
-        // Configurer le texte de respawn
-        respawnText.setFont(font);
-        respawnText.setCharacterSize(24);
-        respawnText.setFillColor(sf::Color::White);
-        respawnText.setString("You Died! Press R to Respawn");
-        respawnText.setPosition(gameWidth * 0.5f - 150, gameHeight * 0.5f - 20);
 
         // Créer le joueur et les fantômes, puis les ajouter à l'EntityManager de la scène
         if (_ents.list.empty()) {
-            auto player = std::make_shared<Player>();
+            const auto player = std::make_shared<Player>();
             player->setPosition({150, 650});
             _ents.list.push_back(player);
 
@@ -146,16 +126,11 @@ void GameScene::load() {
 
             return;
         }
-
-
-        //scoreText.setFont(font); // Assurez-vous que la police est chargée
-        //scoreText.setCharacterSize(24);
-        //scoreText.setFillColor(sf::Color::White);
-        //scoreText.setString("Score: 0"); // Initialement à 0
-        //scoreText.setPosition(gameWidth * 0.05f, gameHeight * 0.05f); // Position en haut à gauche
     }
+
     // Démarrer l'horloge de score
     scoreClock.restart();
+    // reset the score too
 }
 
 void GameScene::update(double dt) {
@@ -165,33 +140,31 @@ void GameScene::update(double dt) {
     auto player = getPlayer();
     if (!player) return;
 
-    //scoreText.setString("Score: " + std::to_string(_ents.score));
-
     // Si le joueur est mort, attendre une action de respawn
     if (player->isAlive() == false) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+        if (Keyboard::isKeyPressed(Keyboard::R)) {
             respawn();
         }
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(*window); // Position de la souris
-            sf::Vector2f worldPos = window->mapPixelToCoords(mousePos);
+        if (Mouse::isButtonPressed(Mouse::Left)) {
+            Vector2i mousePos = Mouse::getPosition(*window); // Position de la souris
+            Vector2f worldPos = window->mapPixelToCoords(mousePos);
             if (respawnButton.getGlobalBounds().contains(worldPos)) {
                 respawn();
             }
         }
         return; // Ne pas mettre à jour les autres entités
-    } else {
-        int currentTime = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
-        currentTime = (currentTime == 0) ? 1 : currentTime;
+    }
 
-        if (currentTime % 3 == 0 && enemyLastSpawned == currentTime - 3) {
-            enemyLastSpawned = currentTime;
+    int currentTime = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
+    currentTime = currentTime == 0 ? 1 : currentTime;
 
-            auto enemy = std::make_shared<Enemy>();
-            enemy->getPlayer(player);
-            enemy->setPosition({ (rand() % 1000) * 1.f, (rand() % 1000) * 1.f }); //rand() % gameWidth, rand() % gameHeight
-            _ents.list.push_back(enemy);
-        }
+    if (currentTime % 3 == 0 && enemyLastSpawned == currentTime - 3) {
+        enemyLastSpawned = currentTime;
+
+        auto enemy = std::make_shared<Enemy>();
+        enemy->getPlayer(player);
+        enemy->setPosition({static_cast<float>(rand() % entity_spawn_radius), static_cast<float>(rand() % entity_spawn_radius)});
+        _ents.list.push_back(enemy);
     }
 
     cameraView.setCenter(player->getPosition());
@@ -202,15 +175,15 @@ void GameScene::update(double dt) {
     player->handleMouseInput(*window);
 }
 
-void GameScene::render(sf::RenderWindow& window) {
+void GameScene::render(RenderWindow& window) {
     window.setView(cameraView); // Appliquer la vue de la caméra
 
     auto player = getPlayer();
     if (!player) return;
 
      // Calculer les limites visibles de la caméra
-    sf::Vector2f viewTopLeft = cameraView.getCenter() - cameraView.getSize() / 2.0f;
-    sf::Vector2f viewBottomRight = cameraView.getCenter() + cameraView.getSize() / 2.0f;
+    Vector2f viewTopLeft = cameraView.getCenter() - cameraView.getSize() / 2.0f;
+    Vector2f viewBottomRight = cameraView.getCenter() + cameraView.getSize() / 2.0f;
 
     ls::Render(window);
 
@@ -231,17 +204,17 @@ void GameScene::render(sf::RenderWindow& window) {
     Scene::render(window);
 
     // TODO: round down
-    sf::Text time_text;
+    Text time_text;
     time_text.setFont(font);
     time_text.setCharacterSize(24);
-    time_text.setFillColor(sf::Color::White);
+    time_text.setFillColor(Color::White);
     time_text.setString("Time: " + std::to_string(round(currentTime * 100) / 100));
     time_text.setPosition(cameraView.getCenter().x - (time_text.getLocalBounds().getSize().x / 2),
                           cameraView.getCenter().y + 250);
 
-    sf::RectangleShape time_overlay({floor(time_text.getLocalBounds().getSize().x + 10),
+    RectangleShape time_overlay({floor(time_text.getLocalBounds().getSize().x + 10),
                                           45});
-    time_overlay.setFillColor(sf::Color(0, 0, 0, 190)); // Couleur semi-transparente
+    time_overlay.setFillColor(Color(0, 0, 0, 190)); // Couleur semi-transparente
     time_overlay.setPosition(time_text.getPosition().x - 5, time_text.getPosition().y - 5);
 
     window.draw(time_overlay);
@@ -263,16 +236,16 @@ void GameScene::render(sf::RenderWindow& window) {
     #endif
 
     // Kill count
-    sf::Text kills_text;
+    Text kills_text;
     kills_text.setFont(font);
     kills_text.setCharacterSize(24);
-    kills_text.setFillColor(sf::Color::White);
+    kills_text.setFillColor(Color::White);
     kills_text.setString("Kills: " + std::to_string(_ents.score));
     kills_text.setPosition(cameraView.getCenter().x - (kills_text.getLocalBounds().getSize().x / 2), cameraView.getCenter().y + 200); //cameraView.getCenter().x ), cameraView.getCenter().y + 200
 
-    sf::RectangleShape kills_overlay({floor(kills_text.getLocalBounds().getSize().x + 10),
+    RectangleShape kills_overlay({floor(kills_text.getLocalBounds().getSize().x + 10),
                                           45});
-    kills_overlay.setFillColor(sf::Color(0, 0, 0, 190)); // Couleur semi-transparente
+    kills_overlay.setFillColor(Color(0, 0, 0, 190)); // Couleur semi-transparente
     kills_overlay.setPosition(kills_text.getPosition().x - 5, kills_text.getPosition().y - 5);
 
     window.draw(kills_overlay);
@@ -280,43 +253,43 @@ void GameScene::render(sf::RenderWindow& window) {
 
     // Si le joueur est mort, ajouter un overlay semi-transparent
     if (!player->isAlive()) {
-        sf::RectangleShape overlay(sf::Vector2f(cameraView.getSize().x, cameraView.getSize().y));
-        overlay.setFillColor(sf::Color(40, 15, 15, 225)); // Couleur semi-transparente
+        RectangleShape overlay(Vector2f(cameraView.getSize().x, cameraView.getSize().y));
+        overlay.setFillColor(Color(40, 15, 15, 225)); // Couleur semi-transparente
         overlay.setPosition(cameraView.getCenter().x - cameraView.getSize().x / 2.0f,
                             cameraView.getCenter().y - cameraView.getSize().y / 2.0f);
 
         window.draw(overlay);
 
-        sf::Text respawnText;
+        Text respawnText;
         respawnText.setFont(font);
         respawnText.setCharacterSize(50);
-        respawnText.setFillColor(sf::Color::White);
+        respawnText.setFillColor(Color::White);
         respawnText.setString("You Died!");
         respawnText.setPosition(cameraView.getCenter().x - (respawnText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y - gameHeight * .3f);
         window.draw(respawnText);
 
-        sf::Text scoreText;
+        Text scoreText;
         scoreText.setFont(font);
         scoreText.setCharacterSize(24);
-        scoreText.setFillColor(sf::Color::White);
+        scoreText.setFillColor(Color::White);
         scoreText.setString("Your score is : " + std::to_string(_ents.score));
         scoreText.setPosition(cameraView.getCenter().x - (scoreText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y);
         window.draw(scoreText);
 
-        sf::Color red(100, 40, 40);
+        Color red(100, 40, 40);
 
         float respawnButton_width = 250.f;
         float respawnButton_height = 100.f;
-        respawnButton.setSize(sf::Vector2f(respawnButton_width, respawnButton_height));
+        respawnButton.setSize(Vector2f(respawnButton_width, respawnButton_height));
         respawnButton.setOrigin(respawnButton_width * .5f, respawnButton_height * .5f);
         respawnButton.setFillColor(red);
         respawnButton.setPosition(cameraView.getCenter().x, cameraView.getCenter().y + gameHeight * .3f);
         window.draw(respawnButton);
 
-        sf::Text respawnButtonText;
+        Text respawnButtonText;
         respawnButtonText.setFont(font);
         respawnButtonText.setCharacterSize(24);
-        respawnButtonText.setFillColor(sf::Color::White);
+        respawnButtonText.setFillColor(Color::White);
         respawnButtonText.setString("RESPAWN");
         respawnButtonText.setPosition(cameraView.getCenter().x - (respawnButtonText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y + gameHeight * .3f - (respawnButtonText.getLocalBounds().getSize().y / 2));
         window.draw(respawnButtonText);
@@ -339,7 +312,7 @@ void GameScene::respawn() {
 
 // Initialiser les scènes
 void initScenes() {
-    gameScene = std::make_shared<GameScene>();
     menuScene = std::make_shared<MenuScene>();
+    gameScene = std::make_shared<GameScene>();
     activeScene = menuScene; // Par défaut, commence par la scène de menu
 }

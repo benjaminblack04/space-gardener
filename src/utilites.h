@@ -6,5 +6,6 @@
 // }
 
 // Would be better as a macro -- Benjamin
+// #pragma once
 
 #define clamp(value, min, max) (value < min) ? min : (value > max) ? max : value
