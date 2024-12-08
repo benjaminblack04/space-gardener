@@ -7,7 +7,7 @@
 #include "misc.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iomanip>
-#include <stdlib.h>s
+#include <stdlib.h>
 
 // Définitions des scènes
 std::shared_ptr<Scene> gameScene;

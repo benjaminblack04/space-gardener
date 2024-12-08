@@ -257,7 +257,7 @@ void EntityManager::update(double dt) {
         // Accéder aux flèches tirées par le joueur
         auto player = dynamic_cast<Player*>(list[0].get()); // Suppose que le joueur est la première entité
         if (!player) continue;
-        std::cout << std::to_string(dt) << std::endl;
+
         for (const auto& arrow : player->getArrows()) {
             auto shape = arrow.getShape();
             if (isCollidingAttack(shape, *enemy)) {
