@@ -1,6 +1,7 @@
 #include "entity.h"
 #include "game.h"
 #include "misc.h"
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
@@ -412,15 +413,47 @@ Player::Player() : stamina(100), maxStamina(100) {
     shape.setOrigin(player_size, player_size);
 }
 
+bool Player::isIntersectingWithWall(sf::Vector2f playerPos) {
+    // NOTE: Never let me write collision code again
+    sf::Vector2f playerSize = {16, 16};
+
+    playerPos.x = playerPos.x - (playerSize.x / 2);
+    playerPos.y = playerPos.y - (playerSize.y / 2);
+
+    for (auto wall : walls) {
+        auto wallPos = wall.getPosition();
+        auto wallSize = wall.getSize();
+
+        if (((playerPos.x >= wallPos.x && playerPos.x <= (wallPos.x + wallSize.x)) &&
+             (playerPos.y >= wallPos.y && playerPos.y <= (wallPos.y + wallSize.y))) ||
+            (((playerPos.x + playerSize.x) >= wallPos.x && (playerPos.x + playerSize.x) <= (wallPos.x + wallSize.x)) &&
+             ((playerPos.y + playerSize.y) >= wallPos.y && (playerPos.y + playerSize.y) <= (wallPos.y + wallSize.y)))) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Player::update(const float& dt) {
     float moveSpeed = 200.0f;
     sf::Vector2f movement(0.0f, 0.0f);
 
-    // Déterminer le mouvement basé sur les touches
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) movement.x -= moveSpeed * dt;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) movement.x += moveSpeed * dt;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) movement.y -= moveSpeed * dt;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) movement.y += moveSpeed * dt;
+    // Movement/make sure the player cannot move into a wall
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) &&
+        !isIntersectingWithWall({shape.getPosition().x - (moveSpeed * dt), shape.getPosition().y})) { // Left
+        movement.x -= moveSpeed * dt;
+    } else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) &&
+               !isIntersectingWithWall({shape.getPosition().x + (moveSpeed * dt), shape.getPosition().y})) { // Right
+        movement.x += moveSpeed * dt;
+    }
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) &&
+        !isIntersectingWithWall({shape.getPosition().x, shape.getPosition().y - (moveSpeed * dt)})) { // Up
+        movement.y -= moveSpeed * dt;
+    } else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) &&
+        !isIntersectingWithWall({shape.getPosition().x, shape.getPosition().y + (moveSpeed * dt)})) { // Up
+        movement.y += moveSpeed * dt;
+    }
 
     if (movement.x != 0.0f || movement.y != 0.0f) {
         // Calculer l'angle en radians
@@ -519,6 +552,10 @@ void Player::render(sf::RenderWindow& window) {
         // Dessiner le rectangle
         window.draw(rectangle);
     }
+}
+
+void Player::addWall(sf::RectangleShape wall) {
+    walls.push_back(wall);
 }
 
 void Player::handleMouseInput(const sf::RenderWindow& window) {

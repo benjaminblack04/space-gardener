@@ -1,8 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "vector"
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 #include <memory>
+#include <tuple>
 #include "math.h"
 #include "utilites.h"
 
@@ -105,8 +107,9 @@ public:
     float getRadius() const override;
     const sf::Shape* getShape() const override;
 
+    void addWall(sf::RectangleShape wall);
 
-
+    bool isIntersectingWithWall(sf::Vector2f playerPos);
 protected:
     float stamina;
     float maxStamina;
@@ -119,7 +122,6 @@ protected:
     float regenDelay = 5.0f;           // Temps en secondes avant la régénération
     float regenRate = 5.0f;
 
-
     float minChargeTime = 1.5f;
 
     bool isCharging = false;
@@ -128,6 +130,7 @@ protected:
     float chargeTime = 0.0f;
     std::vector<Arrow> arrows;
 
+    std::vector<sf::RectangleShape> walls;
 };
 
 class AttackShortEnemy {
