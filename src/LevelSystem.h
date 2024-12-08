@@ -16,7 +16,7 @@ public:
     static void loadLevelFile(const char* path);
     static void Render(sf::RenderWindow &window);
     //
-    static std::tuple<std::string, sf::Vector2f, sf::Vector2f> getObject(std::string name, int index);
+    static sf::RectangleShape getObject(int index);
     //Get Tile at grid coordinate
     static sf::Sprite getTile(sf::Vector2u);
     //Get Screenspace coordinate of tile
@@ -25,7 +25,7 @@ public:
     static sf::Sprite getTileAt(sf::Vector2f);
 protected:
     static std::vector<std::vector<std::unique_ptr<sf::Sprite>>> _tiles; //Internal array of tiles
-    static std::vector<std::tuple<std::string, sf::Vector2f, sf::Vector2f>> _objects;
+    static std::vector<sf::RectangleShape> _objects;
 private:
     LevelSystem() = delete;
     ~LevelSystem() = delete;
