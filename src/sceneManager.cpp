@@ -12,7 +12,7 @@
 #include "graphicsHelpers.h"
 
 // Définitions des scènes
-std::shared_ptr<Scene> gameScene;
+// std::shared_ptr<Scene> gameScene;
 std::shared_ptr<Scene> menuScene;
 
 // Active scene
@@ -48,6 +48,8 @@ void MenuScene::load() {
 }
 
 void MenuScene::update(double dt) {
+
+    std::cout << "MenuScene::update" << std::endl;
     Scene::update(dt);
 
     if (Mouse::isButtonPressed(Mouse::Left)) {
@@ -55,8 +57,9 @@ void MenuScene::update(double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
-            activeScene = gameScene;
-            activeScene->load();
+            std::cout << "[Update] Trying to load game" << std::endl;
+            //activeScene = gameScene;
+            //activeScene->load();
         }
 
         if (menu_exit_button.getGlobalBounds().contains(globalMousePosition))
@@ -66,6 +69,7 @@ void MenuScene::update(double dt) {
 }
 
 void MenuScene::render(RenderWindow& window) {
+    std::cout << "MenuScene::render" << std::endl;
     // Set up camera view to render the menu
     window.setView(cameraView);
 
@@ -313,6 +317,7 @@ void GameScene::respawn() {
 // Initialiser les scènes
 void initScenes() {
     menuScene = std::make_shared<MenuScene>();
-    gameScene = std::make_shared<GameScene>();
+    //gameScene = std::make_shared<GameScene>();
+
     activeScene = menuScene; // Par défaut, commence par la scène de menu
 }

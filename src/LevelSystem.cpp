@@ -26,7 +26,7 @@ std::vector<std::unique_ptr<sf::Texture>> tileset;
 std::vector<std::string> tokenizeString(std::string str, char delim) {
     std::vector<std::string> temp;
 
-    std::string tempStr = "";
+    std::string tempStr;
 
     for (int i = 0; i < str.length(); i++) {
         if (str.at(i) == delim) {
@@ -71,7 +71,7 @@ void LevelSystem::loadLevelFile(const char* path) {
     XMLNode* layer = doc.FirstChildElement("map")->FirstChildElement("layer");
     XMLNode* objects = doc.FirstChildElement("map")->FirstChildElement("objectgroup");
 
-    while (layer != NULL) {
+    while (layer != nullptr) {
         std::vector<std::string> map_data = tokenizeString(layer->FirstChildElement("data")->GetText(), ',');
 
         std::vector<std::unique_ptr<sf::Sprite>> temp_tiles;
@@ -107,10 +107,10 @@ void LevelSystem::loadLevelFile(const char* path) {
         layer = layer->NextSiblingElement("layer");
     }
 
-    while (objects != NULL) {
+    while (objects != nullptr) {
         auto object = objects->FirstChildElement("object");
 
-        while (object != NULL) {
+        while (object != nullptr) {
             auto x = std::stoi(object->Attribute("x")) / 17;
             auto y = std::stoi(object->Attribute("y")) / 17;
 

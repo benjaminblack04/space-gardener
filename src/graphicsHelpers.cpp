@@ -15,8 +15,9 @@ void setMenuButton(sf::RectangleShape &button_field, sf::Text &text_field, const
     button_field.setOrigin(menu_button_width * .5f, menu_button_height * .5f);
     button_field.setFillColor(button_color);
     button_field.setPosition(gameWidth * 0.5f, gameHeight - bottomOffset);
-    setMenuText(text_field, font, size, text_color, text, gameWidth, gameHeight, bottomOffset);
 
+    // Set text properties
+    setMenuText(text_field, font, size, text_color, text, gameWidth, gameHeight, bottomOffset);
 }
 
 
