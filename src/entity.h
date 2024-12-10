@@ -7,6 +7,7 @@
 #include <tuple>
 #include "math.h"
 #include "utilites.h"
+#include <SFML/Audio.hpp>
 
 # define M_PI           3.14159265358979323846
 
@@ -133,6 +134,9 @@ protected:
     float chargeTime = 0.0f;
     std::vector<Arrow> arrows;
 
+    sf::SoundBuffer snd_arrow_shoot;
+    sf::Sound plr_snd;
+
     std::vector<sf::RectangleShape> walls;
 };
 
@@ -207,7 +211,7 @@ public:
 
 private:
     bool alreadyCounted = false;
-    
+
 
     std::shared_ptr<Player> _player;
 
@@ -218,6 +222,9 @@ private:
     std::vector<SwordAttack> swordAttacks; // Liste des attaques triangulaires
     float swordAttackCooldown = 1.0f; // Temps entre deux attaques triangulaires
     float timeSinceLastSwordAttack = 0.0f; // Temps écoulé depuis la dernière attaque
+
+    sf::SoundBuffer snd_swing_sword;
+    sf::Sound eny_snd;
 };
 
 

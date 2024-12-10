@@ -8,6 +8,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iomanip>
 #include <stdlib.h>
+#include <SFML/Audio.hpp>
 
 // Définitions des scènes
 std::shared_ptr<Scene> gameScene;
@@ -16,11 +17,18 @@ std::shared_ptr<Scene> activeScene;
 
 sf::View cameraView;
 
+sf::Music mus_background;
+
 int enemyLastSpawned = 0;
 
 float currentTime = 0;
 
 void MenuScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/menu.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -108,6 +116,11 @@ void MenuScene::render(sf::RenderWindow& window) {
 }
 
 void GameScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/battle.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
 
@@ -339,6 +352,8 @@ void GameScene::respawn() {
 
 // Initialiser les scènes
 void initScenes() {
+    mus_background.setLoop(true);
+
     gameScene = std::make_shared<GameScene>();
     menuScene = std::make_shared<MenuScene>();
     activeScene = menuScene; // Par défaut, commence par la scène de menu
