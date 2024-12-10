@@ -222,6 +222,9 @@ private:
     std::vector<SwordAttack> swordAttacks; // Liste des attaques triangulaires
     float swordAttackCooldown = 1.0f; // Temps entre deux attaques triangulaires
     float timeSinceLastSwordAttack = 0.0f; // Temps écoulé depuis la dernière attaque
+
+    sf::SoundBuffer snd_swing_sword;
+    sf::Sound eny_snd;
 };
 
 

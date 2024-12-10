@@ -727,6 +727,7 @@ Enemy::Enemy() {
     shape.setRadius(enemy_size);
     shape.setFillColor(sf::Color::Green);
     shape.setOrigin(enemy_size, enemy_size);
+    snd_swing_sword.loadFromFile("res/sfx/enemy_swing_sword.wav");
 }
 
 void Enemy::update(const float& dt) {
@@ -891,6 +892,10 @@ void Enemy::setAlreadyCounted(bool counted) {
 
 void Enemy::triggerSwordAttack() {
     if (!_player) return;
+
+    // Play sound
+    eny_snd.setBuffer(snd_swing_sword);
+    eny_snd.play();
 
     // Calculer la direction vers le joueur
     sf::Vector2f direction = _player->getPosition() - _position;
