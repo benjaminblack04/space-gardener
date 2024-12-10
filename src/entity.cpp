@@ -433,6 +433,7 @@ Player::Player() : stamina(100), maxStamina(100) {
     shape.setRadius(player_size);
     shape.setFillColor(sf::Color::Yellow);
     shape.setOrigin(player_size, player_size);
+    snd_arrow_shoot.loadFromFile("res/sfx/player_shoot_arrow.wav");
 }
 
 bool Player::isIntersectingWithWall(sf::Vector2f playerPos) {
@@ -612,6 +613,11 @@ void Player::handleMouseInput(const sf::RenderWindow& window) {
 }
 
 void Player::fireArrow() {
+    // Play sound
+    plr_snd.setBuffer(snd_arrow_shoot);
+    plr_snd.play();
+
+    // Add arrow
     arrows.emplace_back(_position, aimDirection);
 }
 

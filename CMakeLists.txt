@@ -33,6 +33,6 @@ file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
 add_executable(GAME ${SOURCES})
 
 target_include_directories(GAME PRIVATE ${SFML_INCS} ${TINYXML2_INCS})
-target_link_libraries(GAME sfml-graphics tinyxml2)
+target_link_libraries(GAME sfml-graphics sfml-audio tinyxml2)
 
 add_dependencies(GAME copy_resources)
