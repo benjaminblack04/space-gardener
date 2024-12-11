@@ -11,7 +11,9 @@
 #include "utilites.h"
 #include <SFML/Audio.hpp>
 
-# define M_PI           3.14159265358979323846
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 class Entity {
 public:
@@ -20,6 +22,7 @@ public:
     virtual void update(const float& dt) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
 
+    void getSound(std::shared_ptr<sf::Sound> sound);
     const sf::Vector2f& getPosition() const;
     void setPosition(const sf::Vector2f& _position);
     bool is_fordeletion() const;
@@ -62,6 +65,10 @@ protected:
     sf::Texture _texture;
 
     sf::CircleShape shape;
+
+    std::shared_ptr<sf::Sound> _sound;
+
+
 };
 
 class Arrow{
@@ -142,8 +149,7 @@ protected:
     float chargeTime = 0.0f;
     std::vector<Arrow> arrows;
 
-    sf::SoundBuffer snd_arrow_shoot;
-    sf::Sound plr_snd;
+    sf::SoundBuffer arrow_shoot_sound_buffer;
 
     std::vector<sf::RectangleShape> walls;
 };
@@ -233,8 +239,7 @@ private:
     float swordAttackCooldown = 1.0f; // Temps entre deux attaques triangulaires
     float timeSinceLastSwordAttack = 0.0f; // Temps écoulé depuis la dernière attaque
 
-    sf::SoundBuffer snd_swing_sword;
-    sf::Sound eny_snd;
+    sf::SoundBuffer swing_sword_sound_buffer;
 };
 
 

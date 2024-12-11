@@ -18,15 +18,15 @@ using namespace std;
 using namespace sf;
 using namespace tinyxml2;
 
-std::vector<std::vector<std::unique_ptr<sf::Sprite>>> LevelSystem::_tiles;
-std::vector<sf::RectangleShape> LevelSystem::_objects;
+vector<vector<unique_ptr<Sprite>>> LevelSystem::_tiles;
+vector<RectangleShape> LevelSystem::_objects;
 
-std::vector<std::unique_ptr<sf::Texture>> tileset;
+vector<unique_ptr<Texture>> tileset;
 
-std::vector<std::string> tokenizeString(std::string str, char delim) {
-    std::vector<std::string> temp;
+vector<string> tokenizeString(string str, char delim) {
+    vector<string> temp;
 
-    std::string tempStr = "";
+    string tempStr;
 
     for (int i = 0; i < str.length(); i++) {
         if (str.at(i) == delim) {
@@ -43,9 +43,8 @@ std::vector<std::string> tokenizeString(std::string str, char delim) {
 void LevelSystem::loadLevelFile(const char* path) {
     string buffer;
 
-    ifstream f(path);
-    if (f.good()) {
-        f.seekg(0, std::ios::end);
+    if (ifstream f(path); f.good()) {
+        f.seekg(0, ios::end);
         buffer.resize(f.tellg());
         f.seekg(0);
         f.read(&buffer[0], buffer.size());
@@ -57,8 +56,8 @@ void LevelSystem::loadLevelFile(const char* path) {
     tileset.clear();
 
     for (int i = 0; i < 87; i++) {
-        auto t = make_unique<sf::Texture>();
-        t->loadFromFile("res/tiles/" + std::to_string(i) + ".png");
+        auto t = make_unique<Texture>();
+        t->loadFromFile("res/tiles/" + to_string(i) + ".png");
         tileset.push_back(move(t));
     }
 
@@ -66,15 +65,14 @@ void LevelSystem::loadLevelFile(const char* path) {
     doc.LoadFile(path);
 
     int map_width = doc.FirstChildElement("map")->FindAttribute("width")->Int64Value();
-    int tilemap_width = 8;
 
     XMLNode* layer = doc.FirstChildElement("map")->FirstChildElement("layer");
     XMLNode* objects = doc.FirstChildElement("map")->FirstChildElement("objectgroup");
 
-    while (layer != NULL) {
-        std::vector<std::string> map_data = tokenizeString(layer->FirstChildElement("data")->GetText(), ',');
+    while (layer != nullptr) {
+        vector<string> map_data = tokenizeString(layer->FirstChildElement("data")->GetText(), ',');
 
-        std::vector<std::unique_ptr<sf::Sprite>> temp_tiles;
+        vector<unique_ptr<Sprite>> temp_tiles;
 
         float x = 0;
         float y = 0;
@@ -85,16 +83,16 @@ void LevelSystem::loadLevelFile(const char* path) {
                 y++;
             }
 
-            int tile = std::atoi(map_data.at(i).c_str());
+            int tile = atoi(map_data.at(i).c_str());
 
             if (tile == 0) {
-                auto s = make_unique<sf::Sprite>();
+                auto s = make_unique<Sprite>();
                 temp_tiles.push_back(move(s));
                 x++;
                 continue;
             }
 
-            auto s = make_unique<sf::Sprite>();
+            auto s = make_unique<Sprite>();
             s->setTexture(*tileset.at(tile-1));
             s->setPosition(misc::getIsometric(x, y, map_width));
             s->setScale({sprite_scale, sprite_scale});
@@ -107,20 +105,20 @@ void LevelSystem::loadLevelFile(const char* path) {
         layer = layer->NextSiblingElement("layer");
     }
 
-    while (objects != NULL) {
+    while (objects != nullptr) {
         auto object = objects->FirstChildElement("object");
 
-        while (object != NULL) {
-            auto x = std::stoi(object->Attribute("x")) / 17;
-            auto y = std::stoi(object->Attribute("y")) / 17;
+        while (object != nullptr) {
+            auto x = stoi(object->Attribute("x")) / 17;
+            auto y = stoi(object->Attribute("y")) / 17;
 
             float newX = (x - y) * (32 / 2) * sprite_scale;
             float newY = (y + x) * (17 / 2) * sprite_scale;
 
-            auto o = new sf::RectangleShape();
+            auto o = new RectangleShape();
             o->setPosition(newX, newY);
-            o->setSize({static_cast<float>(std::stoi(object->Attribute("width")) * sprite_scale + 12),
-                    static_cast<float>(std::stoi(object->Attribute("height")) * sprite_scale + 12)});
+            o->setSize({static_cast<float>(stoi(object->Attribute("width")) * sprite_scale + 12),
+                    static_cast<float>(stoi(object->Attribute("height")) * sprite_scale + 12)});
 
             _objects.push_back(*o);
 
@@ -131,25 +129,24 @@ void LevelSystem::loadLevelFile(const char* path) {
     }
 }
 
-sf::RectangleShape LevelSystem::getObject(int index) {
+RectangleShape LevelSystem::getObject(int index) {
     int temp = 0;
 
-    for (int i = 0; i < _objects.size(); i++) {
+    for (const auto & _object : _objects) {
         if (temp < index) {
             temp++;
             continue;
-        } else {
-            return _objects[i];
         }
+        return _object;
     }
 
     throw length_error("There is no object at that index");
 }
 
 void LevelSystem::Render(RenderWindow &window) {
-    for (size_t i = 0; i < _tiles.size(); ++i) {
-        for (size_t j = 0; j < _tiles[i].size(); ++j) {
-            window.draw(*_tiles[i][j]);
+    for (auto & _tile : _tiles) {
+        for (const auto & _sub_tile : _tile) {
+            window.draw(*_sub_tile);
         }
     }
 }

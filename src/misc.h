@@ -6,6 +6,6 @@
 #define fps_limit 60
 
 
-namespace misc{
+namespace misc {
     sf::Vector2f getIsometric(int x, int y, int map_width);
 }
