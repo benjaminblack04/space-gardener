@@ -432,6 +432,7 @@ Player::Player() : stamina(100), maxStamina(100) {
     shape.setRadius(player_size);
     shape.setFillColor(sf::Color::Yellow);
     shape.setOrigin(player_size, player_size);
+    snd_arrow_shoot.loadFromFile("res/sfx/player_shoot_arrow.wav");
 }
 
 bool Player::isIntersectingWithWall(sf::Vector2f playerPos) {
@@ -611,6 +612,11 @@ void Player::handleMouseInput(const sf::RenderWindow& window) {
 }
 
 void Player::fireArrow() {
+    // Play sound
+    plr_snd.setBuffer(snd_arrow_shoot);
+    plr_snd.play();
+
+    // Add arrow
     arrows.emplace_back(_position, aimDirection);
 }
 
@@ -720,6 +726,7 @@ Enemy::Enemy() {
     shape.setRadius(enemy_size);
     shape.setFillColor(sf::Color::Green);
     shape.setOrigin(enemy_size, enemy_size);
+    snd_swing_sword.loadFromFile("res/sfx/enemy_swing_sword.wav");
 }
 
 void Enemy::update(const float& dt) {
@@ -884,6 +891,10 @@ void Enemy::setAlreadyCounted(bool counted) {
 
 void Enemy::triggerSwordAttack() {
     if (!_player) return;
+
+    // Play sound
+    eny_snd.setBuffer(snd_swing_sword);
+    eny_snd.play();
 
     // Calculer la direction vers le joueur
     sf::Vector2f direction = _player->getPosition() - _position;
