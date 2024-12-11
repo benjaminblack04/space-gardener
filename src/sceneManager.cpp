@@ -1,13 +1,11 @@
-//Faire setPosition sur toutes les entities et les replacer sans les recréé au chaque fois que l'on arrive sur le jeu
-//Copier le .cpp et .h des entities et voir comment set une position avec comme variable X et Y
 #include "sceneManager.h"
 #include "entity.h"
 #include "LevelSystem.h"
 #include "game.h"
-#include "misc.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iomanip>
 #include <cstdlib>
+#include <SFML/Audio.hpp>
 
 #include "graphicsHelpers.h"
 
@@ -26,11 +24,18 @@ std::shared_ptr<Scene> activeScene;
 
 View cameraView;
 
+Music mus_background;
+
 int enemyLastSpawned = 0;
 
 float currentTime = 0;
 
 void MenuScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/menu.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -109,6 +114,11 @@ void MenuScene::render(RenderWindow& window) {
 }
 
 void MainSettingsScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/menu.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -195,6 +205,11 @@ void MainSettingsScene::render(RenderWindow& window) {
 }
 
 void VideoSettingsScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/menu.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -253,6 +268,11 @@ void VideoSettingsScene::render(RenderWindow& window) {
 }
 
 void AudioSettingsScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/menu.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -289,6 +309,8 @@ void AudioSettingsScene::update(const double dt) {
             activeScene->load();
         }
     }
+
+    mus_background.setVolume(volume_slider.getSliderValue());
 
 
 }
@@ -366,6 +388,11 @@ void InputSettingsScene::render(RenderWindow& window) {
 }
 
 void GameScene::load() {
+    // Play menu music
+    mus_background.stop();
+    mus_background.openFromFile("res/mus/battle.wav");
+    mus_background.play();
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
 
@@ -585,17 +612,21 @@ void GameScene::respawn() {
     _ents.list.push_back(player);
 }
 
-// Initialiser les scènes
 void initScenes() {
+    mus_background.setLoop(true);
+
+    // main menu scene
     menuScene = std::make_shared<MenuScene>();
 
-    //
+    // specific menu scenes
     mainSettingsScene = std::make_shared<MainSettingsScene>();
     videoSettingsScene = std::make_shared<VideoSettingsScene>();
     audioSettingsScene = std::make_shared<AudioSettingsScene>();
     inputSettingsScene = std::make_shared<InputSettingsScene>();
 
+    // game scene
     gameScene = std::make_shared<GameScene>();
 
-    activeScene = menuScene; // Par défaut, commence par la scène de menu
+    // Set the active scene to the menu
+    activeScene = menuScene;
 }
