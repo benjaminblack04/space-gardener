@@ -73,31 +73,28 @@ void Slider::logic(RenderWindow &window) {
 	}
 }
 
-float Slider::getSliderValue()
-{
+float Slider::getSliderValue() {
 	return sliderValue;
 }
 
-void Slider::setSliderValue(float newValue)
-{
-	if (newValue >= minValue && newValue <= maxValue)
-	{
-		sliderValue = newValue;
-		float diff = maxValue - minValue;
-		float diff2 = newValue - minValue;
-		float zzz = axisWidth / diff;
-		float posX = zzz*diff2;
-		posX += xCord;
-		slider.setPosition(posX, yCord);
-	}
-}
+void Slider::setSliderValue(float newValue) {
+	// Check if the new value is within the bounds
+	if (minValue <= newValue && newValue <= maxValue) {
 
-void Slider::setSliderPercentValue(float newPercentValue)
-{
-	if (newPercentValue >= 0 && newPercentValue <= 100)
-	{
-		sliderValue = newPercentValue / 100 * maxValue;
-		slider.setPosition(xCord + axisWidth * newPercentValue / 100, yCord);
+		// Update the slider value
+		sliderValue = newValue;
+
+		// Calculate the position of the slider
+		float maxRange = maxValue - minValue;
+		float newRange = newValue - minValue;
+		float sizeOfRange = axisWidth / maxRange;
+		float posX = sizeOfRange * newRange;
+
+		// Update the position of the slider
+		posX += xCord;
+
+		// Set the position of the slider
+		slider.setPosition(posX, yCord);
 	}
 }
 

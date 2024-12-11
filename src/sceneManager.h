@@ -72,7 +72,7 @@ private:
     Text settings_title_text;
 
     Text resolution_text;
-    Slider resolution_slider;
+    //TODO:
 
     Text settings_back_text;
     RectangleShape settings_back_button;
@@ -86,6 +86,9 @@ public:
 class AudioSettingsScene final : public Scene {
 private:
     Text settings_title_text;
+
+    Text volume_text;
+    Slider volume_slider;
 
     Text settings_back_text;
     RectangleShape settings_back_button;

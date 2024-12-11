@@ -27,6 +27,5 @@ public:
     void logic(sf::RenderWindow &window);
     float getSliderValue();
     void setSliderValue(float newValue);
-    void setSliderPercentValue(float newPercentValue);
     void draw(sf::RenderWindow & window);
 };
