@@ -416,9 +416,8 @@ void GameScene::load() {
                     i++;
                     wall = ls::getObject(i);
                 }
-            } catch(exception e) {
-                std::cerr << "Error: " << e.what() << std::endl;
-                return;
+            } catch(length_error& e) {
+                std::cerr << e.what() << std::endl;
             }
         }
     }
