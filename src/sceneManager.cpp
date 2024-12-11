@@ -25,7 +25,6 @@ std::shared_ptr<Scene> activeScene;
 View cameraView;
 
 Music backgroundMusic;
-
 std::shared_ptr<Sound> audioSound;
 
 int enemyLastSpawned = 0;
@@ -388,6 +387,12 @@ void GameScene::load() {
     backgroundMusic.openFromFile("res/mus/battle.wav");
     backgroundMusic.play();
 
+    // Load background
+    _backgroundTexture.loadFromFile("res/background.png");
+    _backgroundSprite.setTexture(_backgroundTexture);
+    _backgroundSprite.setPosition(-1000, -200);
+    _backgroundSprite.setScale({2, 2});
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
 
@@ -472,6 +477,8 @@ void GameScene::update(double dt) {
 
 void GameScene::render(RenderWindow& window) {
     window.setView(cameraView); // Appliquer la vue de la caméra
+
+    window.draw(_backgroundSprite);
 
     auto player = getPlayer();
     if (!player) return;

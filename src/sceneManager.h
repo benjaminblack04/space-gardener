@@ -129,6 +129,9 @@ public:
     void update(double dt) override;
     void render(RenderWindow& window) override;
     void load() override;
+
+    Texture _backgroundTexture;
+    Sprite _backgroundSprite;
 };
 
 void initScenes();
