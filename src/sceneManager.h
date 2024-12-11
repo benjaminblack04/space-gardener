@@ -18,6 +18,7 @@ extern std::shared_ptr<Scene> gameScene;
 extern std::shared_ptr<Scene> activeScene;
 
 extern bool leftMouseButtonPressed;
+extern bool tabbedIn;
 
 #define entity_spawn_radius 1000
 

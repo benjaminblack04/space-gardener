@@ -7,6 +7,7 @@
 #include "misc.h"
 
 bool leftMouseButtonPressed = false;
+bool tabbedIn = false;
 
 void Reset() {
 
@@ -64,11 +65,23 @@ void Update(RenderWindow& window) {
 
                 break;
             }
-            default: break;
+            case Event::GainedFocus: {
+                std::clog << "[Update] Window gained focus" << std::endl;
+                tabbedIn = true;
+                break;
+            }
+            case Event::LostFocus: {
+                std::clog << "[Update] Window lost focus" << std::endl;
+                tabbedIn = false;
+                break;
+            }
+
+            default:
+                break;
         }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+    if (Keyboard::isKeyPressed(Keyboard::Escape) && tabbedIn) {
         std::clog << "[Update] Escape key pressed" << std::endl;
         if (activeScene == gameScene) {
             activeScene = menuScene;

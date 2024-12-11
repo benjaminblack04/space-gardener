@@ -56,7 +56,7 @@ void MenuScene::load() {
 void MenuScene::update(double dt) {
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed && tabbedIn) {
         leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
@@ -135,7 +135,7 @@ void MainSettingsScene::load() {
 void MainSettingsScene::update(const double dt) {
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed && tabbedIn) {
         leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
@@ -215,7 +215,7 @@ void VideoSettingsScene::load() {
 void VideoSettingsScene::update(const double dt) {
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed && tabbedIn) {
         leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
@@ -265,7 +265,7 @@ void AudioSettingsScene::load() {
 void AudioSettingsScene::update(const double dt) {
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed && tabbedIn) {
         leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
@@ -315,7 +315,7 @@ void InputSettingsScene::load() {
 void InputSettingsScene::update(const double dt) {
     Scene::update(dt);
 
-    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed) {
+    if (Mouse::isButtonPressed(Mouse::Left) && leftMouseButtonPressed && tabbedIn) {
         leftMouseButtonPressed = false;
         const Vector2i relativeMousePosition = Mouse::getPosition(*window); // Position de la souris
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
