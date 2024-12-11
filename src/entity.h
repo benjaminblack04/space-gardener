@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "vector"
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <iostream>
 #include <memory>
 #include <tuple>
@@ -42,6 +44,7 @@ public:
     bool _isMarkedForDeletion = false; // Indique si l'entité doit être supprimée
     float _timeSinceDeath = 0.0f;
 
+    void setTexture(const char* path);
 protected:
     //std::vector<std::shared_ptr<Component>> _components;
     sf::Vector2f _position;
@@ -55,6 +58,8 @@ protected:
     bool isDamaged = false;            // Indique si l'entité a récemment pris des dégâts
     float damageEffectDuration = 0.5f; // Durée pendant laquelle l'entité reste orange
     float damageEffectElapsed = 0.0f;  // Temps écoulé depuis le début de l'effet visuel
+
+    sf::Texture _texture;
 
     sf::CircleShape shape;
 };
@@ -75,6 +80,7 @@ private:
     sf::Vector2f position;
     sf::Vector2f direction;
     sf::CircleShape shape;
+    sf::Texture _texture;
     float speed = 500.0f;
     float lifetime = 5.0f;
     float timeElapsed = 0.0f;
@@ -128,6 +134,8 @@ protected:
 
     float minChargeTime = 1.5f;
 
+    sf::Texture _texture;
+
     bool isCharging = false;
     sf::Vector2f aimDirection;
     sf::Vector2f aimStartPosition;
@@ -175,6 +183,7 @@ public:
 private:
     sf::ConvexShape shape;
     sf::Vector2f direction;
+    sf::Texture _texture;
     float lifetime = 0.5f;
     float timeElapsed = 0.0f;
 };
@@ -212,8 +221,9 @@ public:
 private:
     bool alreadyCounted = false;
 
-
     std::shared_ptr<Player> _player;
+    sf::Texture _texture;
+    float _textureState;
 
     std::vector<AttackShortEnemy> shortAttacks;
     float shortAttackCooldown = .5f; // Temps entre deux attaques

@@ -1,9 +1,11 @@
 #include "entity.h"
 #include "game.h"
 #include "misc.h"
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <cmath>
 
 const int gameWidthEntity = 800;
 const int gameHeightEntity = 600;
@@ -387,24 +389,26 @@ const sf::Shape* Entity::getShape() const {
     return nullptr;
 }
 
-
 Arrow::Arrow(const sf::Vector2f& position, const sf::Vector2f& direction)
     : position(position), direction(direction) {
+    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI;
     shape.setRadius(5.0f);
     shape.setFillColor(sf::Color::White);
     shape.setOrigin(5.0f, 5.0f);
+    shape.setRadius(20.0f);
     shape.setPosition(position);
+    _texture.loadFromFile("res/sprites/arrow.png");
+    shape.setRotation(angle - 90);
 }
 
 void Arrow::update(float dt) {
     position += direction * speed * dt;
     shape.setPosition(position);
     timeElapsed += dt;
-
-    //std::cout << "Arrow updated to: " << position.x << ", " << position.y << std::endl;
 }
 
 void Arrow::render(sf::RenderWindow& window) {
+    shape.setTexture(&_texture);
     window.draw(shape);
 }
 
@@ -431,9 +435,10 @@ const sf::CircleShape& Arrow::getShape() const {
 Player::Player() : stamina(100), maxStamina(100) {
     float player_size = 25.0f;
     shape.setRadius(player_size);
-    shape.setFillColor(sf::Color::Yellow);
     shape.setOrigin(player_size, player_size);
     snd_arrow_shoot.loadFromFile("res/sfx/player_shoot_arrow.wav");
+    _texture.loadFromFile("res/sprites/player.png");
+    shape.setTextureRect(IntRect(32, 0, 32, 32));
 }
 
 bool Player::isIntersectingWithWall(sf::Vector2f playerPos) {
@@ -466,9 +471,11 @@ void Player::update(const float& dt) {
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) &&
         !isIntersectingWithWall({shape.getPosition().x - (moveSpeed * dt), shape.getPosition().y})) { // Left
         movement.x -= moveSpeed * dt;
+        shape.setTextureRect(IntRect(0, 0, 32, 32));
     } else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) &&
                !isIntersectingWithWall({shape.getPosition().x + (moveSpeed * dt), shape.getPosition().y})) { // Right
         movement.x += moveSpeed * dt;
+        shape.setTextureRect(IntRect(32, 0, 32, 32));
     }
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) &&
         !isIntersectingWithWall({shape.getPosition().x, shape.getPosition().y - (moveSpeed * dt)})) { // Up
@@ -497,7 +504,7 @@ void Player::update(const float& dt) {
         invulnerabilityTimeElapsed += dt;
         if (invulnerabilityTimeElapsed >= invulnerabilityDuration) {
             isInvulnerable = false; // Désactiver après la durée
-            shape.setFillColor(sf::Color::Yellow);
+            shape.setFillColor(sf::Color::White);
         }
     }
 
@@ -521,7 +528,7 @@ void Player::update(const float& dt) {
         damageEffectElapsed += dt;
         if (damageEffectElapsed >= damageEffectDuration) {
             isDamaged = false;
-            shape.setFillColor(sf::Color::Yellow); // Remettre à la couleur normale
+            shape.setFillColor(sf::Color::White); // Remettre à la couleur normale
         }
     }
 
@@ -539,6 +546,7 @@ void Player::update(const float& dt) {
 }
 
 void Player::render(sf::RenderWindow& window) {
+    shape.setTexture(&_texture);
     window.draw(shape);
 
     // Dessiner les flèches
@@ -549,12 +557,10 @@ void Player::render(sf::RenderWindow& window) {
 
     // Dessiner l'indicateur de visée si le joueur charge une attaque
     if (isCharging) {
-
         sf::Color startColor = sf::Color::Blue;
         sf::Color endColor = sf::Color::Red;
         float chargeRatio = std::min(chargeTime / minChargeTime, 1.0f); // Ratio entre 0 et 1
         sf::Color indicatorColor = interpolateColor(startColor, endColor, chargeRatio);
-
 
         // Assurez-vous que l'origine du rectangle suit le joueur
         aimStartPosition = _position;
@@ -725,26 +731,20 @@ Enemy::Enemy() {
     /*_player = player; */
     float enemy_size = 25.0f;
     shape.setRadius(enemy_size);
-    shape.setFillColor(sf::Color::Green);
     shape.setOrigin(enemy_size, enemy_size);
     snd_swing_sword.loadFromFile("res/sfx/enemy_swing_sword.wav");
+    _texture.loadFromFile("res/sprites/enemy.png");
+    _textureState = 0;
 }
 
 void Enemy::update(const float& dt) {
     if (!_alive) {
-        shape.setFillColor(sf::Color(139, 69, 19));
         shortAttacks.clear(); // Supprimer toutes les attaques si l'ennemi est mort
         clearSwordAttacks();
         return;
     }
 
     if (_player && _player->isAlive() == false) return;
-    /*float moveSpeed = 100.0f;
-    float dx = (rand() % 3 - 1) * moveSpeed * dt;
-    float dy = (rand() % 3 - 1) * moveSpeed * dt;
-    shape.move(dx, dy);*/
-
-
 
     //// Obtenir la position du joueur
     const sf::Vector2f& playerPosition = _player->getPosition();
@@ -757,27 +757,22 @@ void Enemy::update(const float& dt) {
     float threshold_move = 350.0f;
     float threshold_short_attack = 200.0f;
 
-    float moveSpeed = .7f;
+    float moveSpeed = .65f;
 
     if (distance_player > threshold_move) {
         // Se rapprocher du joueur
         sf::Vector2f direction(dx, dy); // Normaliser le vecteur dx / (distance_player - 10), dy / (distance_player - 10)
-        shape.setFillColor(sf::Color::Green);
         shape.move(direction * moveSpeed * dt);
     }
     else if (threshold_move >= distance_player && distance_player > threshold_short_attack) {
         sf::Vector2f direction(dx, dy); // Normaliser le vecteur dx / (distance_player - 10), dy / (distance_player - 10)
-        shape.setFillColor(sf::Color::Green);
         shape.move(direction * moveSpeed * dt);
 
-        shape.setFillColor(sf::Color::Red);
         timeSinceLastShortAttack += dt;
     }
     else if (threshold_short_attack >= distance_player) {
-        shape.setFillColor(sf::Color::Magenta);
         timeSinceLastSwordAttack += dt;
     }
-
 
     if (timeSinceLastShortAttack >= shortAttackCooldown) {
         timeSinceLastShortAttack = 0.0f;
@@ -809,7 +804,7 @@ void Enemy::update(const float& dt) {
         damageEffectElapsed += dt;
         if (damageEffectElapsed >= damageEffectDuration) {
             isDamaged = false;
-            shape.setFillColor(sf::Color::Green); // Remettre à la couleur normale
+            shape.setFillColor(sf::Color::White); // Remettre à la couleur normale
         }
     }
 
@@ -831,6 +826,8 @@ void Enemy::update(const float& dt) {
 }
 
 void Enemy::render(sf::RenderWindow& window) {
+    shape.setTexture(&_texture);
+    shape.setTextureRect(IntRect(floor(_textureState)*23, 0, 23, 27));
     window.draw(shape);
 
     // Dessiner les attaques courtes
@@ -965,8 +962,10 @@ SwordAttack::SwordAttack(const sf::Vector2f& position, const sf::Vector2f& direc
     shape.setFillColor(sf::Color(255, 0, 0, 200));           // Rouge semi-transparent
     shape.setPosition(position);
 
+    _texture.loadFromFile("res/sprites/slash.png");
+
     // Calculer la rotation pour orienter l'attaque vers la cible
-    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI - 90.f;
+    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI - 90;
     shape.setRotation(angle);
 }
 
@@ -975,7 +974,13 @@ void SwordAttack::update(float dt) {
 }
 
 void SwordAttack::render(sf::RenderWindow& window) {
-    window.draw(shape);
+    sf::RectangleShape textShape;
+    textShape.setPosition({shape.getPosition().x + 50, shape.getPosition().y});
+    textShape.setSize({60, 120});
+    textShape.setRotation(shape.getRotation() + 90);
+    textShape.setTexture(&_texture);
+
+    window.draw(textShape);
 }
 
 bool SwordAttack::isExpired() const {

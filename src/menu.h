@@ -48,6 +48,9 @@ public:
     void update(double dt) override;
     void render(sf::RenderWindow& window) override;
     void load() override;
+
+    sf::Texture _backgroundTexture;
+    sf::Sprite _backgroundSprite;
 };
 
 void initScenes();

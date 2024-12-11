@@ -121,6 +121,12 @@ void GameScene::load() {
     mus_background.openFromFile("res/mus/battle.wav");
     mus_background.play();
 
+    // Load background
+    _backgroundTexture.loadFromFile("res/background.png");
+    _backgroundSprite.setTexture(_backgroundTexture);
+    _backgroundSprite.setPosition(-1000, -200);
+    _backgroundSprite.setScale({2, 2});
+
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
 
@@ -217,6 +223,8 @@ void GameScene::update(double dt) {
 
 void GameScene::render(sf::RenderWindow& window) {
     window.setView(cameraView); // Appliquer la vue de la caméra
+
+    window.draw(_backgroundSprite);
 
     auto player = getPlayer();
     if (!player) return;
@@ -353,6 +361,7 @@ void GameScene::respawn() {
 // Initialiser les scènes
 void initScenes() {
     mus_background.setLoop(true);
+    mus_background.setVolume(10.0f);
 
     gameScene = std::make_shared<GameScene>();
     menuScene = std::make_shared<MenuScene>();
