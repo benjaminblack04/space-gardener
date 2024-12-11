@@ -205,6 +205,13 @@ void VideoSettingsScene::load() {
 
         setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
 
+        setMenuText(resolution_text, font, 28, Color::White, "Resolution", gameWidth, gameHeight, 400);
+        resolution_slider.configure(gameWidth / 2.0f, gameHeight / 2.0f);
+        resolution_slider.create(0, 100);
+
+        // TODO: The only explicit feature we specified was the window size being editable.
+
+
         setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Video Settings", gameWidth, gameHeight, 500);
     }
 
@@ -235,6 +242,10 @@ void VideoSettingsScene::render(RenderWindow& window) {
     // Game title
     window.draw(settings_title_text);
 
+    // Resolution slider
+    window.draw(resolution_text);
+    resolution_slider.draw(window);
+
     // Back button
     window.draw(settings_back_button);
     window.draw(settings_back_text);
@@ -254,6 +265,8 @@ void AudioSettingsScene::load() {
         }
 
         setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        // TODO: SFML will pick the currently active audio device. Not sure if it's possible to switch.
 
         setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Audio Settings", gameWidth, gameHeight, 500);
     }
@@ -304,6 +317,8 @@ void InputSettingsScene::load() {
         }
 
         setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
+
+        // TODO: What should be here?
 
         setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Input Settings", gameWidth, gameHeight, 500);
     }

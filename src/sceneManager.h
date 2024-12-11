@@ -5,6 +5,7 @@
 
 #include "scene.h"
 #include "game.h"
+#include "Slider.h"
 
 extern std::shared_ptr<Scene> menuScene;
 
@@ -69,6 +70,9 @@ public:
 class VideoSettingsScene final : public Scene {
 private:
     Text settings_title_text;
+
+    Text resolution_text;
+    Slider resolution_slider;
 
     Text settings_back_text;
     RectangleShape settings_back_button;
