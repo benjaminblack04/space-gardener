@@ -1,5 +1,4 @@
-#ifndef SPACE_GARDENER_H
-#define SPACE_GARDENER_H
+#pragma once
 
 #include "SFML/Graphics.hpp"
 
@@ -18,8 +17,6 @@ extern std::shared_ptr<Scene> gameScene;
 
 extern std::shared_ptr<Scene> activeScene;
 
-extern bool leftMouseButtonPressed;
-extern bool tabbedIn;
 
 #define entity_spawn_radius 1000
 
@@ -87,8 +84,11 @@ class AudioSettingsScene final : public Scene {
 private:
     Text settings_title_text;
 
-    Text volume_text;
-    Slider volume_slider;
+    Text music_volume_text;
+    Slider music_volume_slider;
+
+    Text audio_volume_text;
+    Slider audio_volume_slider;
 
     Text settings_back_text;
     RectangleShape settings_back_button;
@@ -132,5 +132,3 @@ public:
 };
 
 void initScenes();
-
-#endif // SPACE_GARDENER_H

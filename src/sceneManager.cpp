@@ -24,7 +24,9 @@ std::shared_ptr<Scene> activeScene;
 
 View cameraView;
 
-Music mus_background;
+Music backgroundMusic;
+
+std::shared_ptr<Sound> audioSound;
 
 int enemyLastSpawned = 0;
 
@@ -32,9 +34,9 @@ float currentTime = 0;
 
 void MenuScene::load() {
     // Play menu music
-    mus_background.stop();
-    mus_background.openFromFile("res/mus/menu.wav");
-    mus_background.play();
+    backgroundMusic.stop();
+    backgroundMusic.openFromFile("res/mus/menu.wav");
+    backgroundMusic.play();
 
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
@@ -114,11 +116,6 @@ void MenuScene::render(RenderWindow& window) {
 }
 
 void MainSettingsScene::load() {
-    // Play menu music
-    mus_background.stop();
-    mus_background.openFromFile("res/mus/menu.wav");
-    mus_background.play();
-
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -205,11 +202,6 @@ void MainSettingsScene::render(RenderWindow& window) {
 }
 
 void VideoSettingsScene::load() {
-    // Play menu music
-    mus_background.stop();
-    mus_background.openFromFile("res/mus/menu.wav");
-    mus_background.play();
-
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -268,11 +260,6 @@ void VideoSettingsScene::render(RenderWindow& window) {
 }
 
 void AudioSettingsScene::load() {
-    // Play menu music
-    mus_background.stop();
-    mus_background.openFromFile("res/mus/menu.wav");
-    mus_background.play();
-
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
@@ -283,10 +270,15 @@ void AudioSettingsScene::load() {
 
         setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
 
-        setMenuText(volume_text, font, 28, Color::White, "Volume", gameWidth, gameHeight, 400);
-        volume_slider.configure(gameWidth * 0.5f, gameHeight * 0.5f);
-        volume_slider.create(0, 100);
-        volume_slider.setSliderValue(100);
+        setMenuText(music_volume_text, font, 28, Color::White, "Music Volume", gameWidth, gameHeight, 450);
+        music_volume_slider.configure(gameWidth * 0.5f, gameHeight * 0.5f - 100);
+        music_volume_slider.create(0, 100);
+        music_volume_slider.setSliderValue(50);
+
+        setMenuText(audio_volume_text, font, 28, Color::White, "Audio Volume", gameWidth, gameHeight, 300);
+        audio_volume_slider.configure(gameWidth * 0.5f, gameHeight * 0.5f + 50);
+        audio_volume_slider.create(0, 100);
+        audio_volume_slider.setSliderValue(50);
 
         setMenuText(settings_title_text, font, 50, Color::Yellow, "Space Gardener: Audio Settings", gameWidth, gameHeight, 500);
     }
@@ -309,9 +301,8 @@ void AudioSettingsScene::update(const double dt) {
             activeScene->load();
         }
     }
-
-    mus_background.setVolume(volume_slider.getSliderValue());
-
+    backgroundMusic.setVolume(music_volume_slider.getSliderValue());
+    audioSound->setVolume(audio_volume_slider.getSliderValue());
 
 }
 
@@ -322,9 +313,13 @@ void AudioSettingsScene::render(RenderWindow& window) {
     // Game title
     window.draw(settings_title_text);
 
-    // Volume slider
-    window.draw(volume_text);
-    volume_slider.draw(window);
+    // Music Volume slider
+    window.draw(music_volume_text);
+    music_volume_slider.draw(window);
+
+    // Audio Volume slider
+    window.draw(audio_volume_text);
+    audio_volume_slider.draw(window);
 
     // Back button
     window.draw(settings_back_button);
@@ -389,9 +384,9 @@ void InputSettingsScene::render(RenderWindow& window) {
 
 void GameScene::load() {
     // Play menu music
-    mus_background.stop();
-    mus_background.openFromFile("res/mus/battle.wav");
-    mus_background.play();
+    backgroundMusic.stop();
+    backgroundMusic.openFromFile("res/mus/battle.wav");
+    backgroundMusic.play();
 
     if (_alreadyLoad == false) {
         _alreadyLoad = true;
@@ -408,6 +403,7 @@ void GameScene::load() {
         // Créer le joueur et les fantômes, puis les ajouter à l'EntityManager de la scène
         if (_ents.list.empty()) {
             const auto player = std::make_shared<Player>();
+            player->getSound(audioSound);
             player->setPosition({150, 650});
             _ents.list.push_back(player);
 
@@ -421,17 +417,11 @@ void GameScene::load() {
                     wall = ls::getObject(i);
                 }
             } catch(exception e) {
-                std:cerr << "Error: " << e.what() << std::endl;
+                std::cerr << "Error: " << e.what() << std::endl;
                 return;
             }
-
-            return;
         }
     }
-
-    // Démarrer l'horloge de score
-    scoreClock.restart();
-    // reset the score too
 }
 
 void GameScene::update(double dt) {
@@ -464,15 +454,19 @@ void GameScene::update(double dt) {
         enemyLastSpawned = currentTime;
 
         auto enemy = std::make_shared<Enemy>();
+        enemy->getSound(audioSound);
         enemy->getPlayer(player);
-        enemy->setPosition({static_cast<float>(rand() % entity_spawn_radius), static_cast<float>(rand() % entity_spawn_radius)});
+        enemy->setPosition({
+            static_cast<float>(rand() % entity_spawn_radius),
+            static_cast<float>(rand() % entity_spawn_radius)
+        });
         _ents.list.push_back(enemy);
     }
 
     cameraView.setCenter(player->getPosition());
 
     if (!window) {
-        std::cout << "window don't find !! " << std::endl;
+        std::cout << "[Warning] Can't find Window " << std::endl;
     }
     player->handleMouseInput(*window);
 }
@@ -613,7 +607,8 @@ void GameScene::respawn() {
 }
 
 void initScenes() {
-    mus_background.setLoop(true);
+    backgroundMusic.setLoop(true);
+    audioSound = std::make_shared<Sound>();
 
     // main menu scene
     menuScene = std::make_shared<MenuScene>();
