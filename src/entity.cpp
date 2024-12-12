@@ -204,14 +204,16 @@ void EntityManager::update(double dt) {
     }
 
     // Gestion des collisions entre attaques triangulaires et joueur
-    if (player && player->isAlive()) {
+    if (player->isAlive()) {
         for (auto& entity : list) {
             if (auto enemy = dynamic_pointer_cast<Enemy>(entity)) {
-                for (auto& attack : enemy->getSwordAttacks()) {
-                    if (isCollidingAttack(attack.getShape(), *player)) {
-                        player->decreaseHealth(10); // Inflige des dégâts au joueur
-                        player->regenTimeElapsed = 0.0f;
-                        attack.hasDealtDamage = true; // Marque l'attaque comme utilisée
+                if (enemy->isAlive()) {
+                    for (auto& attack : enemy->getSwordAttacks()) {
+                        if (isCollidingAttack(attack.getShape(), *player)) {
+                            player->decreaseHealth(10); // Inflige des dégâts au joueur
+                            player->regenTimeElapsed = 0.0f;
+                            attack.hasDealtDamage = true; // Marque l'attaque comme utilisée
+                        }
                     }
                 }
             }

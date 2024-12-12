@@ -188,9 +188,6 @@ private:
     float timeElapsed = 0.0f;
 };
 
-
-
-
 class Enemy : public Entity {
 public:
     Enemy();
@@ -235,7 +232,6 @@ private:
 
     SoundBuffer swing_sword_sound_buffer;
 };
-
 
 struct EntityManager {
     vector<shared_ptr<Entity>> list;
