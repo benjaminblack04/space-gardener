@@ -1,4 +1,7 @@
 #include "entity.h"
+
+#include <iostream>
+
 #include "utilites.h"
 
 constexpr int gameWidthEntity = 800;
@@ -732,6 +735,7 @@ Enemy::Enemy() {
     float enemy_size = 25.0f;
     shape.setRadius(enemy_size);
     shape.setOrigin(enemy_size, enemy_size);
+    swing_sword_sound_buffer.loadFromFile("res/sfx/enemy_swing_sword.wav");
     _texture.loadFromFile("res/sprites/enemy.png");
     _textureState = 0;
 }
