@@ -450,7 +450,7 @@ void GameScene::update(double dt) {
     int currentTime = static_cast<int>(scoreClock.getElapsedTime().asSeconds());
     currentTime = currentTime == 0 ? 1 : currentTime;
 
-    if (currentTime % 3 == 0 && enemyLastSpawned == currentTime - 3) {
+    if (currentTime % 3 == 0 && enemyLastSpawned <= currentTime - 3) {
         enemyLastSpawned = currentTime;
 
         auto enemy = make_shared<Enemy>();
