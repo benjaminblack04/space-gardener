@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <memory>
+#include <math.h>
 
 using namespace sf;
 using namespace std;

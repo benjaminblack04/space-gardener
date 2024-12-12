@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <tinyxml2.h>
+#include <memory>
 
 #define ls LevelSystem
 
