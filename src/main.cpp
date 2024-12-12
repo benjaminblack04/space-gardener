@@ -7,7 +7,7 @@
 #include "misc.h"
 
 bool leftMouseButtonPressed = false;
-bool tabbedIn = false;
+bool tabbedIn = true;
 
 void Reset() {
 
