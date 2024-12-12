@@ -1,0 +1,33 @@
+Game Idea:
+Benjamin Black
+Alex Dumbreck
+Thibault GAREL
+
+Programming:
+Benjamin Black
+Alex Dumbreck
+Thibault GAREL
+
+Map:
+Benjamin Black
+
+UI:
+Alex Dumbreck
+Thibault GAREL
+
+Refactoring:
+Alex Dumbreck
+
+Asset collection:
+Thibault GAREL
+Benjamin Black
+
+Assets:
+RusKom
+Mounir Tohami
+Satur9
+MetaShinryu
+Randalinski
+Stephen Challener (https://opengameart.org/content/scifi-creature-tileset-mini-32x32-scifi-creature-icons)
+https://lasonotheque.org/
+gooseninja
