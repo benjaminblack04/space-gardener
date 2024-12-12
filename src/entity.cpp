@@ -1,16 +1,8 @@
 #include "entity.h"
-#include "game.h"
-#include "misc.h"
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <cmath>
+#include "utilites.h"
 
-#include "sceneManager.h"
-
-const int gameWidthEntity = 800;
-const int gameHeightEntity = 600;
+constexpr int gameWidthEntity = 800;
+constexpr int gameHeightEntity = 600;
 
 Color interpolateColor(const Color& start, const Color& end, float factor) {
     factor = clamp(factor, 0.0f, 1.0f); // Limiter le facteur entre 0 et 1
@@ -22,25 +14,25 @@ Color interpolateColor(const Color& start, const Color& end, float factor) {
 }
 
 bool isColliding(const Entity& a, const Entity& b) {
-    float distance = std::sqrt(
-        std::pow(a.getPosition().x - b.getPosition().x, 2) +
-        std::pow(a.getPosition().y - b.getPosition().y, 2)
+    float distance = sqrt(
+        pow(a.getPosition().x - b.getPosition().x, 2) +
+        pow(a.getPosition().y - b.getPosition().y, 2)
     );
 
     float collisionDistance = 25.0f * 2; // Rayon de base pour les cercles
     return distance <= collisionDistance;
 }
 
-float distanceFromCircleToSegment(const Vector2f& circleCenter, const Vector2f& p1, const Vector2f& p2) {
-    Vector2f d = p2 - p1; // Vecteur du segment
-    Vector2f f = circleCenter - p1;
+double distanceFromCircleToSegment(const Vector2f& circleCenter, const Vector2f& p1, const Vector2f& p2) {
+    const Vector2f d = p2 - p1; // Vecteur du segment
+    const Vector2f f = circleCenter - p1;
 
     float t = (f.x * d.x + f.y * d.y) / (d.x * d.x + d.y * d.y);
-    t = std::max(0.0f, std::min(1.0f, t)); // Contraindre t à l'intervalle [0, 1]
+    t = max(0.0f, min(1.0f, t)); // Contraindre t à l'intervalle [0, 1]
 
-    Vector2f closestPoint = p1 + t * d; // Point le plus proche sur le segment
-    float distance = std::sqrt(std::pow(closestPoint.x - circleCenter.x, 2) +
-                               std::pow(closestPoint.y - circleCenter.y, 2));
+    const Vector2f closestPoint = p1 + t * d; // Point le plus proche sur le segment
+    const auto distance = sqrt(pow(closestPoint.x - circleCenter.x, 2) +
+                               pow(closestPoint.y - circleCenter.y, 2));
 
     return distance;
 }
@@ -68,7 +60,7 @@ bool isPointInTriangle(const Vector2f& p, const Vector2f& p0, const Vector2f& p1
 }
 
 bool isPointInShape(const Shape& shape, const Vector2f& point) {
-    if (const ConvexShape* convexShape = dynamic_cast<const ConvexShape*>(&shape)) {
+    if (const auto* convexShape = dynamic_cast<const ConvexShape*>(&shape)) {
         if (convexShape->getPointCount() >= 3) {
             for (size_t i = 0; i < convexShape->getPointCount(); ++i) {
                 Vector2f p0 = convexShape->getTransform().transformPoint(convexShape->getPoint(i));
@@ -93,9 +85,9 @@ bool isCollidingAttack(const Shape& shape, const Entity& entity) {
         Vector2f otherCenter = otherCircle->getPosition();
         float otherRadius = otherCircle->getRadius();
 
-        float distance = std::sqrt(
-            std::pow(circleCenter.x - otherCenter.x, 2) +
-            std::pow(circleCenter.y - otherCenter.y, 2)
+        float distance = sqrt(
+            pow(circleCenter.x - otherCenter.x, 2) +
+            pow(circleCenter.y - otherCenter.y, 2)
         );
 
         return distance <= (circleRadius + otherRadius); // Collision si les cercles se chevauchent
@@ -111,7 +103,7 @@ bool isCollidingAttack(const Shape& shape, const Entity& entity) {
         // Vérifier si un des sommets du polygone est dans le cercle
         for (size_t i = 0; i < convexShape->getPointCount(); ++i) {
             Vector2f point = convexShape->getTransform().transformPoint(convexShape->getPoint(i));
-            float distance = std::sqrt(std::pow(point.x - circleCenter.x, 2) + std::pow(point.y - circleCenter.y, 2));
+            float distance = sqrt(pow(point.x - circleCenter.x, 2) + pow(point.y - circleCenter.y, 2));
             if (distance <= circleRadius) {
                 return true; // Collision si un sommet est dans le cercle
             }
@@ -197,7 +189,7 @@ void EntityManager::update(double dt) {
             if (isColliding(*enemy1, *enemy2)) {
                 // Calcul de la direction pour séparer les ennemis
                 Vector2f dir = enemy1->getPosition() - enemy2->getPosition();
-                float magnitude = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+                float magnitude = sqrt(dir.x * dir.x + dir.y * dir.y);
                 if (magnitude != 0) dir /= magnitude; // Normalisation
 
                 // Déplacement pour éviter le chevauchement
@@ -214,7 +206,7 @@ void EntityManager::update(double dt) {
     // Gestion des collisions entre attaques triangulaires et joueur
     if (player && player->isAlive()) {
         for (auto& entity : list) {
-            if (auto enemy = std::dynamic_pointer_cast<Enemy>(entity)) {
+            if (auto enemy = dynamic_pointer_cast<Enemy>(entity)) {
                 for (auto& attack : enemy->getSwordAttacks()) {
                     if (isCollidingAttack(attack.getShape(), *player)) {
                         player->decreaseHealth(10); // Inflige des dégâts au joueur
@@ -271,8 +263,8 @@ void EntityManager::update(double dt) {
         }
     }
 
-    list.erase(std::remove_if(list.begin(), list.end(),
-        [](const std::shared_ptr<Entity>& entity) {
+    list.erase(remove_if(list.begin(), list.end(),
+        [](const shared_ptr<Entity>& entity) {
             return entity->_isMarkedForDeletion;
         }),
         list.end());
@@ -300,7 +292,7 @@ Entity::Entity() : _position(0.0f, 0.0f), _rotation(0.0f), _alive(true), _visibl
 Entity::~Entity() {}
 
 
-void Entity::getSound(std::shared_ptr<sf::Sound> sound) {
+void Entity::getSound(shared_ptr<Sound> sound) {
     _sound = sound;
 }
 
@@ -363,7 +355,7 @@ void Entity::decreaseHealth(float damage) {
     if (_health <= 0) {
         _alive = false;
         shape.setFillColor(Color(139, 69, 19));
-        //std::cout << "Entity is dead!" << std::endl;
+        //cout << "Entity is dead!" << endl;
     }
     else {
         // Activer l'effet de dégâts
@@ -397,7 +389,7 @@ const Shape* Entity::getShape() const {
 
 Arrow::Arrow(const Vector2f& position, const Vector2f& direction)
     : position(position), direction(direction) {
-    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI;
+    const float angle = atan2(direction.y, direction.x) * 180.0f / M_PI;
     shape.setRadius(5.0f);
     shape.setFillColor(Color::White);
     shape.setOrigin(5.0f, 5.0f);
@@ -493,7 +485,7 @@ void Player::update(const float& dt) {
 
     if (movement.x != 0.0f || movement.y != 0.0f) {
         // Calculer l'angle en radians
-        float angle = std::atan2(movement.y, movement.x);
+        float angle = atan2(movement.y, movement.x);
 
         // Convertir en degrés et appliquer la rotation
         setRotation(angle * 180.0f / M_PI);
@@ -546,7 +538,7 @@ void Player::update(const float& dt) {
     _position = shape.getPosition();
 
     // Supprimer les flèches expirées
-    arrows.erase(std::remove_if(arrows.begin(), arrows.end(), [](const Arrow& arrow) {
+    arrows.erase(remove_if(arrows.begin(), arrows.end(), [](const Arrow& arrow) {
         return arrow.isExpired();
         }), arrows.end());
 }
@@ -557,7 +549,7 @@ void Player::render(RenderWindow& window) {
 
     // Dessiner les flèches
     for (auto& arrow : arrows) {
-        //std::cout << "Arrow position: " << arrow.getPosition().x << ", " << arrow.getPosition().y << std::endl;
+        //cout << "Arrow position: " << arrow.getPosition().x << ", " << arrow.getPosition().y << endl;
         arrow.render(window);
     }
 
@@ -565,7 +557,7 @@ void Player::render(RenderWindow& window) {
     if (isCharging) {
         Color startColor = Color::Blue;
         Color endColor = Color::Red;
-        float chargeRatio = std::min(chargeTime / minChargeTime, 1.0f); // Ratio entre 0 et 1
+        float chargeRatio = min(chargeTime / minChargeTime, 1.0f); // Ratio entre 0 et 1
         Color indicatorColor = interpolateColor(startColor, endColor, chargeRatio);
 
         // Assurez-vous que l'origine du rectangle suit le joueur
@@ -581,7 +573,7 @@ void Player::render(RenderWindow& window) {
         rectangle.setPosition(aimStartPosition); // Définir le point de départ
 
         // Calculer l'angle de rotation
-        float angle = std::atan2(aimDirection.y, aimDirection.x) * 180.0f / M_PI;
+        float angle = atan2(aimDirection.y, aimDirection.x) * 180.0f / M_PI;
         rectangle.setRotation(angle); // Appliquer la rotation
 
         // Dessiner le rectangle
@@ -607,7 +599,7 @@ void Player::handleMouseInput(const RenderWindow& window) {
         aimDirection = worldPos - aimStartPosition;
 
         // Normaliser la direction
-        float magnitude = std::sqrt(aimDirection.x * aimDirection.x + aimDirection.y * aimDirection.y);
+        float magnitude = sqrt(aimDirection.x * aimDirection.x + aimDirection.y * aimDirection.y);
         if (magnitude != 0) aimDirection /= magnitude;
 
         chargeTime += 0.1f; // Simuler l'accumulation de charge
@@ -634,7 +626,7 @@ void Player::fireArrow() {
     arrows.emplace_back(_position, aimDirection);
 }
 
-const std::vector<Arrow>& Player::getArrows() const {
+const vector<Arrow>& Player::getArrows() const {
     return arrows;
 }
 
@@ -716,8 +708,8 @@ void Player::dodge(const float& dt) {
         lastDodgeTime = currentTime;
 
         // Direction d'esquive (avant selon la rotation actuelle)
-        Vector2f dodgeDirection(std::cos(getRotation() * M_PI / 180.0f),
-            std::sin(getRotation() * M_PI / 180.0f));
+        Vector2f dodgeDirection(cos(getRotation() * M_PI / 180.0f),
+            sin(getRotation() * M_PI / 180.0f));
         setPosition(getPosition() + dodgeDirection * dodgeDistance);
 
         // Synchroniser la position avec le sprite
@@ -756,7 +748,7 @@ void Enemy::update(const float& dt) {
 
     float dx = playerPosition.x - _position.x;
     float dy = playerPosition.y - _position.y;
-    float distance_player = std::sqrt(dx * dx + dy * dy);
+    float distance_player = sqrt(dx * dx + dy * dy);
 
     //// Définir une distance seuil
     float threshold_move = 350.0f;
@@ -785,7 +777,7 @@ void Enemy::update(const float& dt) {
         // Calculer la direction vers le joueur
         Vector2f playerPos = _player->getPosition();
         Vector2f direction = Vector2f(playerPos.x - _position.x, playerPos.y - _position.y);
-        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        float magnitude = sqrt(direction.x * direction.x + direction.y * direction.y);
         if (magnitude != 0) direction /= magnitude;
 
         // Ajouter une attaque courte
@@ -814,13 +806,13 @@ void Enemy::update(const float& dt) {
     }
 
     // Supprimer les attaques expirées
-    shortAttacks.erase(std::remove_if(shortAttacks.begin(), shortAttacks.end(),
+    shortAttacks.erase(remove_if(shortAttacks.begin(), shortAttacks.end(),
         [](const AttackShortEnemy& attack) {
             return attack.isExpired() || attack.hasDealtDamage;
         }),
         shortAttacks.end());
 
-    swordAttacks.erase(std::remove_if(swordAttacks.begin(), swordAttacks.end(),
+    swordAttacks.erase(remove_if(swordAttacks.begin(), swordAttacks.end(),
         [](const SwordAttack& attack) { return attack.isExpired() || attack.hasDealtDamage; }),
         swordAttacks.end());
 
@@ -845,7 +837,7 @@ void Enemy::render(RenderWindow& window) {
     }
 }
 
-void Enemy::getPlayer(std::shared_ptr<Player> player) {
+void Enemy::getPlayer(shared_ptr<Player> player) {
     _player = player;
 }
 
@@ -875,7 +867,7 @@ void Enemy::drawHealthBar(RenderWindow& window) {
     window.draw(healthBar);           // Barre verte
 }
 
-std::vector<AttackShortEnemy>& Enemy::getShortAttacks() {
+vector<AttackShortEnemy>& Enemy::getShortAttacks() {
     return shortAttacks;
 }
 
@@ -903,7 +895,7 @@ void Enemy::triggerSwordAttack() {
 
     // Calculer la direction vers le joueur
     Vector2f direction = _player->getPosition() - _position;
-    float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    float magnitude = sqrt(direction.x * direction.x + direction.y * direction.y);
     if (magnitude != 0) direction /= magnitude;
 
     // Ajouter une nouvelle attaque triangulaire
@@ -911,7 +903,7 @@ void Enemy::triggerSwordAttack() {
     timeSinceLastSwordAttack = 0.0f; // Réinitialiser le cooldown
 }
 
-std::vector<SwordAttack>& Enemy::getSwordAttacks() {
+vector<SwordAttack>& Enemy::getSwordAttacks() {
     return swordAttacks;
 }
 
@@ -938,7 +930,7 @@ AttackShortEnemy::AttackShortEnemy(const Vector2f& position, const Vector2f& dir
     shape.setPosition(position);
 
     // Calculer la rotation du triangle
-    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI + 90.0f;
+    float angle = atan2(direction.y, direction.x) * 180.0f / M_PI + 90.0f;
     shape.setRotation(angle);
 }
 
@@ -972,7 +964,7 @@ SwordAttack::SwordAttack(const Vector2f& position, const Vector2f& direction)
     _texture.loadFromFile("res/sprites/slash.png");
 
     // Calculer la rotation pour orienter l'attaque vers la cible
-    float angle = std::atan2(direction.y, direction.x) * 180.0f / M_PI - 90;
+    float angle = atan2(direction.y, direction.x) * 180.0f / M_PI - 90;
     shape.setRotation(angle);
 }
 
@@ -981,7 +973,7 @@ void SwordAttack::update(float dt) {
 }
 
 void SwordAttack::render(RenderWindow& window) {
-    sf::RectangleShape textShape;
+    RectangleShape textShape;
     textShape.setPosition({shape.getPosition().x + 50, shape.getPosition().y});
     textShape.setSize({60, 120});
     textShape.setRotation(shape.getRotation() + 90);

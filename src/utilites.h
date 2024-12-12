@@ -1,11 +1,5 @@
-// template <typename T>
-// T clamp(T value, T min, T max) {
-//     if (value < min) return min; // Si la valeur est inférieure au minimum, retourner min
-//     if (value > max) return max; // Si la valeur est supérieure au maximum, retourner max
-//     return value; // Sinon, retourner la valeur
-// }
+#pragma once
 
-// Would be better as a macro -- Benjamin
-// #pragma once
-
+// Helper function to ensure something is within a range;
+// if it's not, it will be clamped to the nearest value.
 #define clamp(value, min, max) (value < min) ? min : (value > max) ? max : value

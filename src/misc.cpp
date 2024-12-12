@@ -1,7 +1,7 @@
 #include "misc.h"
 
 // Converts 2D X and Y into an isometric Vector2f
-sf::Vector2f misc::getIsometric(int x, int y, int map_width) {
+Vector2f misc::getIsometric(int x, int y, int map_width) {
   const int mapOffsetX = map_width / 2;
   const int mapOffsetY = 0;
 

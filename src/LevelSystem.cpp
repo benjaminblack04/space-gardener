@@ -1,27 +1,13 @@
 #include "LevelSystem.h"
 #include "misc.h"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <exception>
-#include <fstream>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <tinyxml2.h>
-#include <tuple>
-#include <vector>
 
-using namespace std;
-using namespace sf;
-using namespace tinyxml2;
+#include <fstream>
+
 
 vector<vector<unique_ptr<Sprite>>> LevelSystem::_tiles;
 vector<RectangleShape> LevelSystem::_objects;
 
-vector<unique_ptr<Texture>> tileset;
+vector<unique_ptr<Texture>> tileSet;
 
 vector<string> tokenizeString(string str, char delim) {
     vector<string> temp;
@@ -53,12 +39,12 @@ void LevelSystem::loadLevelFile(const char* path) {
         throw string("Couldn't open level file: ") + path;
     }
 
-    tileset.clear();
+    tileSet.clear();
 
     for (int i = 0; i < 87; i++) {
         auto t = make_unique<Texture>();
         t->loadFromFile("res/tiles/" + to_string(i) + ".png");
-        tileset.push_back(move(t));
+        tileSet.push_back(move(t));
     }
 
     XMLDocument doc;
@@ -93,7 +79,7 @@ void LevelSystem::loadLevelFile(const char* path) {
             }
 
             auto s = make_unique<Sprite>();
-            s->setTexture(*tileset.at(tile-1));
+            s->setTexture(*tileSet.at(tile-1));
             s->setPosition(misc::getIsometric(x, y, map_width));
             s->setScale({sprite_scale, sprite_scale});
             temp_tiles.push_back(move(s));

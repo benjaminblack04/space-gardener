@@ -1,21 +1,21 @@
 #pragma once
 
-#include "SFML/Graphics.hpp"
-
 #include "scene.h"
-#include "game.h"
 #include "Slider.h"
 
-extern std::shared_ptr<Scene> menuScene;
+using namespace std;
+using namespace sf;
 
-extern std::shared_ptr<Scene> mainSettingsScene;
-extern std::shared_ptr<Scene> videoSettingsScene;
-extern std::shared_ptr<Scene> audioSettingsScene;
-extern std::shared_ptr<Scene> inputSettingsScene;
+extern shared_ptr<Scene> menuScene;
 
-extern std::shared_ptr<Scene> gameScene;
+extern shared_ptr<Scene> mainSettingsScene;
+extern shared_ptr<Scene> videoSettingsScene;
+extern shared_ptr<Scene> audioSettingsScene;
+extern shared_ptr<Scene> inputSettingsScene;
 
-extern std::shared_ptr<Scene> activeScene;
+extern shared_ptr<Scene> gameScene;
+
+extern shared_ptr<Scene> activeScene;
 
 
 #define entity_spawn_radius 1000
@@ -69,7 +69,8 @@ private:
     Text settings_title_text;
 
     Text resolution_text;
-    //TODO:
+
+    //TODO: Do we need a slider for resolution?
 
     Text settings_back_text;
     RectangleShape settings_back_button;

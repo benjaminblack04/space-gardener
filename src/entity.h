@@ -1,15 +1,10 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
-#include "vector"
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <iostream>
-#include <memory>
-#include <tuple>
-#include "math.h"
-#include "utilites.h"
 #include <SFML/Audio.hpp>
+
+using namespace sf;
+using namespace std;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -20,11 +15,11 @@ public:
     Entity();
     virtual ~Entity();
     virtual void update(const float& dt) = 0;
-    virtual void render(sf::RenderWindow& window) = 0;
+    virtual void render(RenderWindow& window) = 0;
 
-    void getSound(std::shared_ptr<sf::Sound> sound);
-    const sf::Vector2f& getPosition() const;
-    void setPosition(const sf::Vector2f& _position);
+    void getSound(shared_ptr<Sound> sound);
+    const Vector2f& getPosition() const;
+    void setPosition(const Vector2f& _position);
     bool is_fordeletion() const;
     float getRotation() const;
     void setRotation(float _rotation);
@@ -42,15 +37,14 @@ public:
     void syncShapePosition();
 
     virtual float getRadius() const;
-    virtual const sf::Shape* getShape() const;
+    virtual const Shape* getShape() const;
 
     bool _isMarkedForDeletion = false; // Indique si l'entité doit être supprimée
     float _timeSinceDeath = 0.0f;
 
-    void setTexture(const char* path);
 protected:
-    //std::vector<std::shared_ptr<Component>> _components;
-    sf::Vector2f _position;
+    //vector<shared_ptr<Component>> _components;
+    Vector2f _position;
     float _rotation;
     bool _alive;       // should be updated
     bool _visible;     // should be rendered
@@ -62,32 +56,32 @@ protected:
     float damageEffectDuration = 0.5f; // Durée pendant laquelle l'entité reste orange
     float damageEffectElapsed = 0.0f;  // Temps écoulé depuis le début de l'effet visuel
 
-    sf::Texture _texture;
+    Texture _texture;
 
-    sf::CircleShape shape;
+    CircleShape shape;
 
-    std::shared_ptr<sf::Sound> _sound;
+    shared_ptr<Sound> _sound;
 
 
 };
 
-class Arrow{
+class Arrow {
 public:
-    Arrow(const sf::Vector2f& position, const sf::Vector2f& direction);
+    Arrow(const Vector2f& position, const Vector2f& direction);
     void update(float dt);
-    void render(sf::RenderWindow& window);
+    void render(RenderWindow& window);
     bool isExpired() const;
     void markAsExpired();
 
-    const sf::Vector2f& getPosition() const;
+    const Vector2f& getPosition() const;
     float getRadius() const;
-    const sf::CircleShape& getShape() const;
+    const CircleShape& getShape() const;
 
 private:
-    sf::Vector2f position;
-    sf::Vector2f direction;
-    sf::CircleShape shape;
-    sf::Texture _texture;
+    Vector2f position;
+    Vector2f direction;
+    CircleShape shape;
+    Texture _texture;
     float speed = 500.0f;
     float lifetime = 5.0f;
     float timeElapsed = 0.0f;
@@ -97,15 +91,15 @@ class Player : public Entity {
 public:
     Player();
     void update(const float& dt) override;
-    void render(sf::RenderWindow& window) override;
+    void render(RenderWindow& window) override;
 
-    void handleMouseInput(const sf::RenderWindow& window);
+    void handleMouseInput(const RenderWindow& window);
     void fireArrow();
 
-    const std::vector<Arrow>& getArrows() const;
+    const vector<Arrow>& getArrows() const;
 
-    void drawHealthBar(sf::RenderWindow& window, sf::Font font);
-    void drawSaminaBar(sf::RenderWindow& window, sf::Font font);
+    void drawHealthBar(RenderWindow& window, Font font);
+    void drawSaminaBar(RenderWindow& window, Font font);
 
     void decreaseStamina(float value);
     void increaseStamina(float value);
@@ -113,7 +107,7 @@ public:
     void dodge(const float& dt);
 
     //void setPosition(float x, float y) override;
-    //sf::Vector2f getPosition() const override;
+    //Vector2f getPosition() const override;
 
     bool isInvulnerable = false;   // Indique si le joueur est invulnérable
     float invulnerabilityDuration = 0.5f; // Durée de l'invulnérabilité (en secondes)
@@ -122,11 +116,11 @@ public:
     float regenTimeElapsed = 0.0f;     // Temps écoulé depuis la dernière prise de dégâts
 
     float getRadius() const override;
-    const sf::Shape* getShape() const override;
+    const Shape* getShape() const override;
 
-    void addWall(sf::RectangleShape wall);
+    void addWall(RectangleShape wall);
 
-    bool isIntersectingWithWall(sf::Vector2f playerPos);
+    bool isIntersectingWithWall(Vector2f playerPos);
 protected:
     float stamina;
     float maxStamina;
@@ -141,34 +135,34 @@ protected:
 
     float minChargeTime = 1.5f;
 
-    sf::Texture _texture;
+    Texture _texture;
 
     bool isCharging = false;
-    sf::Vector2f aimDirection;
-    sf::Vector2f aimStartPosition;
+    Vector2f aimDirection;
+    Vector2f aimStartPosition;
     float chargeTime = 0.0f;
-    std::vector<Arrow> arrows;
+    vector<Arrow> arrows;
 
-    sf::SoundBuffer arrow_shoot_sound_buffer;
+    SoundBuffer arrow_shoot_sound_buffer;
 
-    std::vector<sf::RectangleShape> walls;
+    vector<RectangleShape> walls;
 };
 
 class AttackShortEnemy {
 public:
-    AttackShortEnemy(const sf::Vector2f& position, const sf::Vector2f& direction);
+    AttackShortEnemy(const Vector2f& position, const Vector2f& direction);
     void update(const float& dt);
-    void render(sf::RenderWindow& window);
+    void render(RenderWindow& window);
 
     bool isExpired() const;
 
-    const sf::ConvexShape& getShape() const;
+    const ConvexShape& getShape() const;
 
     bool hasDealtDamage = false;
 
 private:
-    sf::ConvexShape shape; // Triangle rouge
-    sf::Vector2f direction; // Direction de déplacement
+    ConvexShape shape; // Triangle rouge
+    Vector2f direction; // Direction de déplacement
     float speed = 400.0f; // Vitesse
     float lifetime = 3.0f; // Durée de vie
     float timeElapsed = 0.0f;
@@ -176,20 +170,20 @@ private:
 
 class SwordAttack {
 public:
-    SwordAttack(const sf::Vector2f& position, const sf::Vector2f& direction);
+    SwordAttack(const Vector2f& position, const Vector2f& direction);
 
     void update(float dt);
-    void render(sf::RenderWindow& window);
+    void render(RenderWindow& window);
     bool isExpired() const;
 
-    const sf::ConvexShape& getShape() const;
+    const ConvexShape& getShape() const;
 
     bool hasDealtDamage = false; // Évite que l'attaque inflige des dégâts plusieurs fois
 
 private:
-    sf::ConvexShape shape;
-    sf::Vector2f direction;
-    sf::Texture _texture;
+    ConvexShape shape;
+    Vector2f direction;
+    Texture _texture;
     float lifetime = 0.5f;
     float timeElapsed = 0.0f;
 };
@@ -201,24 +195,24 @@ class Enemy : public Entity {
 public:
     Enemy();
     void update(const float& dt) override;
-    void render(sf::RenderWindow& window) override;
+    void render(RenderWindow& window) override;
 
     //void setPosition(float x, float y) override;
-    //sf::Vector2f getPosition() const override;
-    void getPlayer(std::shared_ptr<Player> player);
+    //Vector2f getPosition() const override;
+    void getPlayer(shared_ptr<Player> player);
 
-    void drawHealthBar(sf::RenderWindow& window);
+    void drawHealthBar(RenderWindow& window);
 
-    std::vector<AttackShortEnemy>& getShortAttacks();
+    vector<AttackShortEnemy>& getShortAttacks();
 
     void triggerSwordAttack(); // Déclencher une attaque triangulaire
-    std::vector<SwordAttack>& getSwordAttacks();
+    vector<SwordAttack>& getSwordAttacks();
     void clearSwordAttacks(); // Nettoyer les attaques triangulaires
 
     void clearAttacks();
 
     float getRadius() const override;
-    const sf::Shape* getShape() const override;
+    const Shape* getShape() const override;
 
     bool getAlreadyCounted() const;
     void setAlreadyCounted(bool counted);
@@ -227,26 +221,26 @@ public:
 private:
     bool alreadyCounted = false;
 
-    std::shared_ptr<Player> _player;
-    sf::Texture _texture;
+    shared_ptr<Player> _player;
+    Texture _texture;
     float _textureState;
 
-    std::vector<AttackShortEnemy> shortAttacks;
+    vector<AttackShortEnemy> shortAttacks;
     float shortAttackCooldown = .5f; // Temps entre deux attaques
     float timeSinceLastShortAttack = 0.0f;
 
-    std::vector<SwordAttack> swordAttacks; // Liste des attaques triangulaires
+    vector<SwordAttack> swordAttacks; // Liste des attaques triangulaires
     float swordAttackCooldown = 1.0f; // Temps entre deux attaques triangulaires
     float timeSinceLastSwordAttack = 0.0f; // Temps écoulé depuis la dernière attaque
 
-    sf::SoundBuffer swing_sword_sound_buffer;
+    SoundBuffer swing_sword_sound_buffer;
 };
 
 
 struct EntityManager {
-    std::vector<std::shared_ptr<Entity>> list;
+    vector<shared_ptr<Entity>> list;
     void update(double dt);
-    void render(sf::RenderWindow& window);
+    void render(RenderWindow& window);
 
     int score = 0; // Nouveau membre pour le score
     void increaseScore(int points); // Nouvelle fonction pour augmenter le score

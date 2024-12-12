@@ -1,12 +1,12 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "entity.h"
 
 using namespace std;
 using namespace sf;
 
-const int gameWidth = 800;
-const int gameHeight = 600;
+constexpr int gameWidth = 800;
+constexpr int gameHeight = 600;
 
 extern Player player;
 extern vector<Entity*> entities;

@@ -1,31 +1,27 @@
 #include "sceneManager.h"
-#include "entity.h"
 #include "LevelSystem.h"
 #include "game.h"
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <iomanip>
-#include <cstdlib>
-#include <SFML/Audio.hpp>
-
 #include "graphicsHelpers.h"
 
+#include <iostream>
+
 // Définitions des scènes
-std::shared_ptr<Scene> menuScene;
+shared_ptr<Scene> menuScene;
 
-std::shared_ptr<Scene> mainSettingsScene;
-std::shared_ptr<Scene> videoSettingsScene;
-std::shared_ptr<Scene> audioSettingsScene;
-std::shared_ptr<Scene> inputSettingsScene;
+shared_ptr<Scene> mainSettingsScene;
+shared_ptr<Scene> videoSettingsScene;
+shared_ptr<Scene> audioSettingsScene;
+shared_ptr<Scene> inputSettingsScene;
 
-std::shared_ptr<Scene> gameScene;
+shared_ptr<Scene> gameScene;
 
 // Active scene
-std::shared_ptr<Scene> activeScene;
+shared_ptr<Scene> activeScene;
 
 View cameraView;
 
 Music backgroundMusic;
-std::shared_ptr<Sound> audioSound;
+shared_ptr<Sound> audioSound;
 
 int enemyLastSpawned = 0;
 
@@ -37,11 +33,11 @@ void MenuScene::load() {
     backgroundMusic.openFromFile("res/mus/menu.wav");
     backgroundMusic.play();
 
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return; // Quitter si la police ne peut pas être chargée
         }
 
@@ -68,19 +64,19 @@ void MenuScene::update(double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (menu_start_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load game scene" << std::endl;
+            clog << "[Update] Trying to load game scene" << endl;
             activeScene = gameScene;
             activeScene->load();
         }
 
         if (menu_settings_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            clog << "[Update] Trying to load settings scene" << endl;
             activeScene = mainSettingsScene;
             activeScene->load();
         }
 
         if (menu_exit_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to close game" << std::endl;
+            clog << "[Update] Trying to close game" << endl;
             window->close();
         }
 
@@ -115,11 +111,11 @@ void MenuScene::render(RenderWindow& window) {
 }
 
 void MainSettingsScene::load() {
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return; // Quitter si la police ne peut pas être chargée
         }
 
@@ -147,25 +143,25 @@ void MainSettingsScene::update(const double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (settings_video_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load video settings scene" << std::endl;
+            clog << "[Update] Trying to load video settings scene" << endl;
             activeScene = videoSettingsScene;
             activeScene->load();
         }
 
         if (settings_audio_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load audio settings scene" << std::endl;
+            clog << "[Update] Trying to load audio settings scene" << endl;
             activeScene = audioSettingsScene;
             activeScene->load();
         }
 
         if (settings_input_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load input settings scene" << std::endl;
+            clog << "[Update] Trying to load input settings scene" << endl;
             activeScene = inputSettingsScene;
             activeScene->load();
         }
 
         if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load menu scene" << std::endl;
+            clog << "[Update] Trying to load menu scene" << endl;
             activeScene = menuScene;
             activeScene->load();
         }
@@ -201,11 +197,11 @@ void MainSettingsScene::render(RenderWindow& window) {
 }
 
 void VideoSettingsScene::load() {
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return; // Quitter si la police ne peut pas être chargée
         }
 
@@ -231,7 +227,7 @@ void VideoSettingsScene::update(const double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            clog << "[Update] Trying to load settings scene" << endl;
             activeScene = mainSettingsScene;
             activeScene->load();
         }
@@ -259,11 +255,11 @@ void VideoSettingsScene::render(RenderWindow& window) {
 }
 
 void AudioSettingsScene::load() {
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return; // Quitter si la police ne peut pas être chargée
         }
 
@@ -295,7 +291,7 @@ void AudioSettingsScene::update(const double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            clog << "[Update] Trying to load settings scene" << endl;
             activeScene = mainSettingsScene;
             activeScene->load();
         }
@@ -330,11 +326,11 @@ void AudioSettingsScene::render(RenderWindow& window) {
 }
 
 void InputSettingsScene::load() {
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
         // Chargement de la police (assurez-vous d'avoir un fichier de police accessible)
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return; // Quitter si la police ne peut pas être chargée
         }
 
@@ -358,7 +354,7 @@ void InputSettingsScene::update(const double dt) {
         const Vector2f globalMousePosition = window->mapPixelToCoords(relativeMousePosition);
 
         if (settings_back_button.getGlobalBounds().contains(globalMousePosition)) {
-            std::clog << "[Update] Trying to load settings scene" << std::endl;
+            clog << "[Update] Trying to load settings scene" << endl;
             activeScene = mainSettingsScene;
             activeScene->load();
         }
@@ -393,24 +389,24 @@ void GameScene::load() {
     _backgroundSprite.setPosition(-1000, -200);
     _backgroundSprite.setScale({2, 2});
 
-    if (_alreadyLoad == false) {
-        _alreadyLoad = true;
+    if (_alreadyLoaded == false) {
+        _alreadyLoaded = true;
 
         cameraView.setSize(gameWidth, gameHeight);
         cameraView.setCenter(gameWidth * .5f, gameHeight * .5f);
 
         // Charger la police pour le texte du score
         if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-            std::cerr << "Error: Font not found!" << std::endl;
+            cerr << "Error: Font not found!" << endl;
             return;
         }
 
         // Créer le joueur et les fantômes, puis les ajouter à l'EntityManager de la scène
-        if (_ents.list.empty()) {
-            const auto player = std::make_shared<Player>();
+        if (_entities.list.empty()) {
+            const auto player = make_shared<Player>();
             player->getSound(audioSound);
             player->setPosition({150, 650});
-            _ents.list.push_back(player);
+            _entities.list.push_back(player);
 
             try {
                 int i = 0;
@@ -422,7 +418,7 @@ void GameScene::load() {
                     wall = ls::getObject(i);
                 }
             } catch(length_error& e) {
-                std::cerr << e.what() << std::endl;
+                cerr << e.what() << endl;
             }
         }
     }
@@ -457,20 +453,20 @@ void GameScene::update(double dt) {
     if (currentTime % 3 == 0 && enemyLastSpawned == currentTime - 3) {
         enemyLastSpawned = currentTime;
 
-        auto enemy = std::make_shared<Enemy>();
+        auto enemy = make_shared<Enemy>();
         enemy->getSound(audioSound);
         enemy->getPlayer(player);
         enemy->setPosition({
             static_cast<float>(rand() % entity_spawn_radius),
             static_cast<float>(rand() % entity_spawn_radius)
         });
-        _ents.list.push_back(enemy);
+        _entities.list.push_back(enemy);
     }
 
     cameraView.setCenter(player->getPosition());
 
     if (!window) {
-        std::cout << "[Warning] Can't find Window " << std::endl;
+        cout << "[Warning] Can't find Window " << endl;
     }
     player->handleMouseInput(*window);
 }
@@ -490,8 +486,8 @@ void GameScene::render(RenderWindow& window) {
     ls::Render(window);
 
     // Dessiner les barres de vie des ennemis
-    for (const auto& entity : _ents.list) {
-        if (auto enemy = std::dynamic_pointer_cast<Enemy>(entity)) {
+    for (const auto& entity : _entities.list) {
+        if (auto enemy = dynamic_pointer_cast<Enemy>(entity)) {
             if (enemy->isAlive()) {
                 enemy->drawHealthBar(window);
             }
@@ -510,7 +506,7 @@ void GameScene::render(RenderWindow& window) {
     time_text.setFont(font);
     time_text.setCharacterSize(24);
     time_text.setFillColor(Color::White);
-    time_text.setString("Time: " + std::to_string(round(currentTime * 100) / 100));
+    time_text.setString("Time: " + to_string(round(currentTime * 100) / 100));
     time_text.setPosition(cameraView.getCenter().x - (time_text.getLocalBounds().getSize().x / 2),
                           cameraView.getCenter().y + 250);
 
@@ -533,7 +529,7 @@ void GameScene::render(RenderWindow& window) {
             wall = ls::getObject(i);
         }
     } catch(exception e) {
-        std:cerr << "Error: " << e.what() << std::endl;
+        std:cerr << "Error: " << e.what() << endl;
     }
     #endif
 
@@ -542,7 +538,7 @@ void GameScene::render(RenderWindow& window) {
     kills_text.setFont(font);
     kills_text.setCharacterSize(24);
     kills_text.setFillColor(Color::White);
-    kills_text.setString("Kills: " + std::to_string(_ents.score));
+    kills_text.setString("Kills: " + to_string(_entities.score));
     kills_text.setPosition(cameraView.getCenter().x - (kills_text.getLocalBounds().getSize().x / 2), cameraView.getCenter().y + 200); //cameraView.getCenter().x ), cameraView.getCenter().y + 200
 
     RectangleShape kills_overlay({floor(kills_text.getLocalBounds().getSize().x + 10),
@@ -574,7 +570,7 @@ void GameScene::render(RenderWindow& window) {
         scoreText.setFont(font);
         scoreText.setCharacterSize(24);
         scoreText.setFillColor(Color::White);
-        scoreText.setString("Your score is : " + std::to_string(_ents.score));
+        scoreText.setString("Your score is : " + to_string(_entities.score));
         scoreText.setPosition(cameraView.getCenter().x - (scoreText.getLocalBounds().getSize().x / 2), cameraView.getCenter().y);
         window.draw(scoreText);
 
@@ -602,31 +598,31 @@ void GameScene::render(RenderWindow& window) {
 }
 
 void GameScene::respawn() {
-    _ents.list.clear();
+    _entities.list.clear();
 
     scoreClock.restart();
     enemyLastSpawned = 0;
 
-    auto player = std::make_shared<Player>();
+    auto player = make_shared<Player>();
     player->setPosition({150, 650});
-    _ents.list.push_back(player);
+    _entities.list.push_back(player);
 }
 
 void initScenes() {
     backgroundMusic.setLoop(true);
-    audioSound = std::make_shared<Sound>();
+    audioSound = make_shared<Sound>();
 
     // main menu scene
-    menuScene = std::make_shared<MenuScene>();
+    menuScene = make_shared<MenuScene>();
 
     // specific menu scenes
-    mainSettingsScene = std::make_shared<MainSettingsScene>();
-    videoSettingsScene = std::make_shared<VideoSettingsScene>();
-    audioSettingsScene = std::make_shared<AudioSettingsScene>();
-    inputSettingsScene = std::make_shared<InputSettingsScene>();
+    mainSettingsScene = make_shared<MainSettingsScene>();
+    videoSettingsScene = make_shared<VideoSettingsScene>();
+    audioSettingsScene = make_shared<AudioSettingsScene>();
+    inputSettingsScene = make_shared<InputSettingsScene>();
 
     // game scene
-    gameScene = std::make_shared<GameScene>();
+    gameScene = make_shared<GameScene>();
 
     // Set the active scene to the menu
     activeScene = menuScene;

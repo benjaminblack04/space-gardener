@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "game.h"
 #include "sceneManager.h"
-#include "scene.h"
 #include "LevelSystem.h"
 #include "misc.h"
 
@@ -14,16 +14,16 @@ void Reset() {
 }
 
 void load(RenderWindow& window) {
-    std::clog << "[load] Loading scenes..." << std::endl;
+    clog << "[load] Loading scenes..." << endl;
     initScenes();
 
-    std::clog << "[load] Loading active scene..." << std::endl;
+    clog << "[load] Loading active scene..." << endl;
     activeScene->load();
 
-    std::clog << "[load] Loading level..." << std::endl;
+    clog << "[load] Loading level..." << endl;
     ls::loadLevelFile("res/levels/arena.xml");
 
-    std::clog << "[load] Setting scene windows..." << std::endl;
+    clog << "[load] Setting scene windows..." << endl;
     menuScene->setWindow(window);
 
     mainSettingsScene->setWindow(window);
@@ -33,7 +33,7 @@ void load(RenderWindow& window) {
 
     gameScene->setWindow(window);
 
-    std::clog << "[load] Calling reset..." << std::endl;
+    clog << "[load] Calling reset..." << endl;
     Reset();
 }
 
@@ -66,12 +66,12 @@ void Update(RenderWindow& window) {
                 break;
             }
             case Event::GainedFocus: {
-                std::clog << "[Update] Window gained focus" << std::endl;
+                clog << "[Update] Window gained focus" << endl;
                 tabbedIn = true;
                 break;
             }
             case Event::LostFocus: {
-                std::clog << "[Update] Window lost focus" << std::endl;
+                clog << "[Update] Window lost focus" << endl;
                 tabbedIn = false;
                 break;
             }
@@ -82,7 +82,7 @@ void Update(RenderWindow& window) {
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Escape) && tabbedIn) {
-        std::clog << "[Update] Escape key pressed" << std::endl;
+        clog << "[Update] Escape key pressed" << endl;
         if (activeScene == gameScene) {
             activeScene = menuScene;
             activeScene->load();
@@ -101,7 +101,7 @@ int main() {
 
     window.setFramerateLimit(fps_limit);
 
-    std::clog << "Loading game..." << std::endl;
+    clog << "Loading game..." << endl;
     load(window);
 
     while (window.isOpen()) {

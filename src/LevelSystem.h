@@ -1,32 +1,28 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <memory>
-#include <string>
-#include <vector>
-#include <map>
-#include <tuple>
+#include <tinyxml2.h>
 
 #define ls LevelSystem
 
+using namespace std;
+using namespace sf;
+using namespace tinyxml2;
+
 class LevelSystem {
 public:
-    static void loadLevelFile(const char* path);
-    static void Render(sf::RenderWindow &window);
-    //
-    static sf::RectangleShape getObject(int index);
-    //Get Tile at grid coordinate
-    static sf::Sprite getTile(sf::Vector2u);
-    //Get Screenspace coordinate of tile
-    static sf::Vector2f getTilePosition(sf::Vector2u);
-    //get the tile at screenspace pos
-    static sf::Sprite getTileAt(sf::Vector2f);
-protected:
-    static std::vector<std::vector<std::unique_ptr<sf::Sprite>>> _tiles; //Internal array of tiles
-    static std::vector<sf::RectangleShape> _objects;
-private:
     LevelSystem() = delete;
     ~LevelSystem() = delete;
+
+    static void loadLevelFile(const char* path);
+    static void Render(RenderWindow &window);
+
+    static RectangleShape getObject(int index);
+
+protected:
+    // List of 2d tiles
+    static vector<vector<unique_ptr<Sprite>>> _tiles;
+
+    // list of objects like walls
+    static vector<RectangleShape> _objects;
 };

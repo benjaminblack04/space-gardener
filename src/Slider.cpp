@@ -1,10 +1,13 @@
 #include "Slider.h"
 
+#include <iostream>
+
 using namespace sf;
+using namespace std;
 
 Slider::Slider() {
     if (!font.loadFromFile("./res/fonts/Arial.ttf")) {
-    	std::cerr << "Error: Font not found!" << std::endl;
+    	cerr << "Error: Font not found!" << endl;
     	return;
     }
 
@@ -38,7 +41,7 @@ void Slider::configure(int x, int y)
 	slider.setPosition(x, y);
 }
 
-Text Slider::returnText(int x, int y, std::string z, int fontSize) {
+Text Slider::returnText(int x, int y, string z, int fontSize) {
 	text.setCharacterSize(fontSize);
 	text.setPosition(x, y);
 	text.setString(z);
@@ -103,10 +106,10 @@ void Slider::draw(RenderWindow &window)
 	logic(window);
 
 	// Min/Initial value
-	window.draw(returnText(xCord - axisWidth * 0.5f - 10, yCord + 10, std::to_string(minValue), 20));
+	window.draw(returnText(xCord - axisWidth * 0.5f - 10, yCord + 10, to_string(minValue), 20));
 
 	// Max value
-	window.draw(returnText(xCord + axisWidth * 0.5f - 10, yCord + 10, std::to_string(maxValue), 20));
+	window.draw(returnText(xCord + axisWidth * 0.5f - 10, yCord + 10, to_string(maxValue), 20));
 
 	// Draw the bar
 	window.draw(axis);
@@ -116,5 +119,5 @@ void Slider::draw(RenderWindow &window)
 
 	// Draw the current value
 	window.draw(returnText(slider.getPosition().x - axisWidth * 0.5f + sliderWidth, slider.getPosition().y - sliderHeight,
-		std::to_string(static_cast<int>(sliderValue)), 15));
+		to_string(static_cast<int>(sliderValue)), 15));
 }

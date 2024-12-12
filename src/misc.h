@@ -5,7 +5,8 @@
 #define sprite_scale 2
 #define fps_limit 60
 
+using namespace sf;
 
 namespace misc {
-    sf::Vector2f getIsometric(int x, int y, int map_width);
+    Vector2f getIsometric(int x, int y, int map_width);
 }

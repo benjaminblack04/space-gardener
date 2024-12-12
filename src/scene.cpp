@@ -3,26 +3,26 @@
 
 
 void Scene::update(double dt) {
-    _ents.update(dt);
+    _entities.update(dt);
 }
 
-void Scene::render(sf::RenderWindow& window) {
-    _ents.render(window);
+void Scene::render(RenderWindow& window) {
+    _entities.render(window);
 }
 
-std::vector<std::shared_ptr<Entity>>& Scene::getEnts() {
-    return _ents.list;
+vector<shared_ptr<Entity>>& Scene::getEntities() {
+    return _entities.list;
 }
 
-std::shared_ptr<Player> Scene::getPlayer() const {
-    for (const auto& entity : _ents.list) {
-        if (auto player = std::dynamic_pointer_cast<Player>(entity)) {
+shared_ptr<Player> Scene::getPlayer() const {
+    for (const auto& entity : _entities.list) {
+        if (auto player = dynamic_pointer_cast<Player>(entity)) {
             return player;
         }
     }
     return nullptr;
 }
 
-void Scene::setWindow(sf::RenderWindow& window) {
+void Scene::setWindow(RenderWindow& window) {
     this->window = &window;
 }
