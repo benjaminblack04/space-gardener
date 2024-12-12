@@ -176,16 +176,16 @@ void MainSettingsScene::render(RenderWindow& window) {
     window.draw(settings_title_text);
 
     // Video settings
-    window.draw(settings_video_button);
-    window.draw(settings_video_text);
+    // window.draw(settings_video_button);
+    // window.draw(settings_video_text);
 
     // Audio settings
     window.draw(settings_audio_button);
     window.draw(settings_audio_text);
 
     // Input settings
-    window.draw(settings_input_button);
-    window.draw(settings_input_text);
+    // window.draw(settings_input_button);
+    // window.draw(settings_input_text);
 
     // Back button
     window.draw(settings_back_button);
