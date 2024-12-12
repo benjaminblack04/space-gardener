@@ -121,9 +121,7 @@ void MainSettingsScene::load() {
 
         const Color gris(128, 128, 200);
 
-        setMenuButton(settings_video_button, settings_video_text, gris, Color::White, font, 28, "Video Settings", gameWidth, gameHeight, 400);
         setMenuButton(settings_audio_button, settings_audio_text, gris, Color::White, font, 28, "Audio Settings", gameWidth, gameHeight, 300);
-        setMenuButton(settings_input_button, settings_input_text, gris, Color::White, font, 28, "Input Settings", gameWidth, gameHeight, 200);
 
         setMenuButton(settings_back_button, settings_back_text, Color::White, Color::Red, font, 28, "Back", gameWidth, gameHeight, 50);
 
